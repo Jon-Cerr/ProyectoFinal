@@ -32,6 +32,7 @@
 #include <windowsx.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <wincodec.h>
 
 #define _GRAFICOS_SOURCE_
 #define CLASS_NAME "GraficosXD"
@@ -152,6 +153,7 @@ static COLORREF _colores[] = {
     RGB(128, 64, 0),    // CAFE
     RGB(0, 170, 228),   // AZUL CIELO
 };
+static IWICImagingFactory *m_pIWICFactory = NULL;
 
 // Declaraciones de funciones
 
@@ -994,6 +996,15 @@ void LimpiarEstadoBotonIzquierdo()
     SendInput(ARRAYSIZE(input), input, sizeof(INPUT));
 }
 
+void cambiarIconoVentana() {
+    HICON myIcon = LoadImage(NULL, "assets/img/gameIcon.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE);
+    if (myIcon == NULL)
+    {
+        ventana.muestraMensaje("No se pudo cargar el icono...");
+    }
+    SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)myIcon);
+} 
+
 // Estructura de Ventana
 
 const struct Ventana ventana = {
@@ -1044,7 +1055,8 @@ const struct Ventana ventana = {
     ratonBotonIzquierdo,
     ratonBotonDerecho,
     reproducirAudio,
-    LimpiarEstadoBotonIzquierdo};
+    LimpiarEstadoBotonIzquierdo,
+    cambiarIconoVentana};
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

@@ -514,8 +514,13 @@ extern const struct Ventana
 	 */
 	void (*reproducirAudio)(const char *audio);
 
+	/**
+	 * @brief Limpia el estado del clcik izquierdo
+	 * 
+	 */
 	void (*LimpiarEstadoBotonIzquierdo)();
 
+	void (*cambiarIconoVentana)();
 } ventana;
 
 #endif

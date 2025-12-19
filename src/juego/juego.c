@@ -21,8 +21,8 @@ Imagen *crearFondoStage()
     return fondoStage;
 }
 
-void animacionPersonaje(Personaje *personaje)
+void animacionPersonaje(Personaje *personaje, int tecla, int teclaSoltada)
 {
-    actualizarMovimiento(personaje);
+    actualizarMovimiento(personaje, tecla, teclaSoltada);
     dibujarPersonaje(personaje);
 }
