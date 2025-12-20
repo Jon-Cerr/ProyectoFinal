@@ -20,7 +20,7 @@ void dibujarEscenario(Imagen *fondoStage);
  * @param tecla Valor de la tecla presionada
  * @param teclaSoltada Valor de la tecla soltada
  */
-void animacionPersonaje(Personaje *personaje, int tecla, int teclaSoltada);
+void animacionPersonaje(Personaje *personaje1, Personaje *personaje2, int tecla, int teclaSoltada);
 
 /**
  * @brief Funcion que crea la imagen del escenario
@@ -28,4 +28,6 @@ void animacionPersonaje(Personaje *personaje, int tecla, int teclaSoltada);
  * @return Imagen* 
  */
 Imagen *crearFondoStage();
+
+void gameLoop(Imagen *fondoStage, Personaje *personaje, int tecla, int teclaSoltada);
 #endif

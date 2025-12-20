@@ -25,10 +25,9 @@ int main()
         teclaSoltada = ventana.teclaSoltada();
         ventana.limpiaVentana();
         dibujarEscenario(fondoStage);
-        animacionPersonaje(subZero, tecla, teclaSoltada);
-        animacionPersonaje(scorpio, tecla, teclaSoltada);
+        animacionPersonaje(subZero, scorpio, tecla, teclaSoltada);
         ventana.actualizaVentana();
-        ventana.espera(100);
+        ventana.espera(50);
     }
     liberarPersonajeMemoria(subZero);
     liberarPersonajeMemoria(scorpio);
