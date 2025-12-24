@@ -16,19 +16,19 @@ Fondos *crearFondos()
     {
         ventana.muestraMensaje("No se pudieron cargar los fondos.");
     }
-    fondos->fondoInicio = ventana.creaImagen("assets/img/fondoInicio.bmp");
-    fondos->fondoStage = ventana.creaImagen("assets/img/fondo_stage.bmp");
+    fondos->fondoInicio = ventana.creaImagen("./assets/img/fondoInicio.bmp");
+    fondos->fondoStage = ventana.creaImagen("./assets/img/fondo_stage.bmp");
     return fondos;
 }
 
-void animacionPersonaje(Juego *juego)
+void animacionPersonaje(Juego *juego, MenuSeleccion *menuSel)
 {
     actualizarMovimiento(juego->personaje1, juego->tecla, juego->teclaSoltada);
     dibujarPersonaje(juego->personaje1);
     actualizarMovimiento(juego->personaje2, juego->tecla, juego->teclaSoltada);
     dibujarPersonaje(juego->personaje2);
-    dibujarHUD(juego->personaje1, juego->tecla);
-    dibujarHUDP2(juego->personaje2, juego->tecla);
+    dibujarHUD(juego->personaje1, juego->tecla, menuSel);
+    dibujarHUDP2(juego->personaje2, juego->tecla, menuSel);
     detectarColision(juego->personaje1, juego->personaje2, juego->tecla);
 }
 
@@ -67,10 +67,10 @@ void iniciarJuego(Juego *juego, EstadoJuego *estadoJuego)
     }
 }
 
-void gameLoop(Juego *juego)
+void gameLoop(Juego *juego, MenuSeleccion *menuSel)
 {
     dibujarEscenario(juego->fondosJuego);
-    animacionPersonaje(juego);
+    animacionPersonaje(juego, menuSel);
 }
 
 AssetsRetratos *crearRetratos()
@@ -84,6 +84,10 @@ AssetsRetratos *crearRetratos()
     retratosPersonajes->scorpion = ventana.creaImagen("./assets/img/scorpionRetrato.bmp");
     retratosPersonajes->subZero = ventana.creaImagen("./assets/img/subZeroRetrato.bmp");
     retratosPersonajes->raiden = ventana.creaImagen("./assets/img/raidenRetrato.bmp");
+    retratosPersonajes->liuKangSeleccionado = ventana.creaImagen("./assets/img/liuKangSeleccionado.bmp");
+    retratosPersonajes->scorpionSeleccionado = ventana.creaImagen("./assets/img/scorpionSeleccionado.bmp");
+    retratosPersonajes->subZeroSeleccionado = ventana.creaImagen("./assets/img/subZeroSeleccionado.bmp");
+    retratosPersonajes->raidenSeleccionado = ventana.creaImagen("./assets/img/raidenSeleccionado.bmp");
     retratosPersonajes->fondoSeleccion = ventana.creaImagen("./assets/img/fondoSeleccion.bmp");
     retratosPersonajes->contenedorRetrato = ventana.creaImagen("./assets/img/contenedorRetrato.bmp");
     retratosPersonajes->cursorSelector = ventana.creaImagenConMascara("./assets/img/cursorSelector.bmp", "./assets/img/cursorSelectorMask.bmp");
@@ -128,8 +132,6 @@ void crearMenuSeleccion(AssetsRetratos *retrato)
     ventana.muestraImagenEscalada(100, 330, 100, 150, retrato->subZero);
     ventana.muestraImagenEscalada(1080, 170, 100, 150, retrato->scorpion);
     ventana.muestraImagenEscalada(1080, 330, 100, 150, retrato->raiden);
-    ventana.muestraImagenEscalada(1080, 500, 100, 150, retrato->contenedorRetrato);
-    ventana.muestraImagenEscalada(100, 500, 100, 150, retrato->contenedorRetrato);
 }
 
 void dibujarCursor(CursorSeleccion *cursorPersonaje, AssetsRetratos *retratos, Personajes *personaje)
@@ -167,9 +169,12 @@ void liberarImagenes(AssetsRetratos *retratosPersonajes)
     ventana.eliminaImagen(retratosPersonajes->subZero);
     ventana.eliminaImagen(retratosPersonajes->raiden);
     ventana.eliminaImagen(retratosPersonajes->fondoSeleccion);
-    ventana.eliminaImagen(retratosPersonajes->contenedorRetrato);
     ventana.eliminaImagen(retratosPersonajes->cursorSelector);
     ventana.eliminaImagen(retratosPersonajes->cursorSelectorP2);
+    ventana.eliminaImagen(retratosPersonajes->liuKangSeleccionado);
+    ventana.eliminaImagen(retratosPersonajes->scorpionSeleccionado);
+    ventana.eliminaImagen(retratosPersonajes->subZeroSeleccionado);
+    ventana.eliminaImagen(retratosPersonajes->raidenSeleccionado);
 }
 
 void menuLoop(MenuSeleccion *menuSel, EstadoJuego *estadoJuego)
@@ -204,9 +209,68 @@ void menuLoop(MenuSeleccion *menuSel, EstadoJuego *estadoJuego)
     dibujarCursor(menuSel->cursorP1, menuSel->retrato, &(menuSel->selP1));
     dibujarCursor(menuSel->cursorP2, menuSel->retrato, &(menuSel->selP2));
     iniciarPelea(menuSel->cursorP1, menuSel->cursorP2, menuSel->datosJuego, tecla);
+    if (menuSel->datosJuego->p1Listo || menuSel->datosJuego->p2Listo)
+        animacionInicioPelea(menuSel);
     if (menuSel->datosJuego->p1Listo && menuSel->datosJuego->p2Listo)
     {
-        ventana.reproducirAudio(NULL);
-        *estadoJuego = ESTADO_JUGANDO;
+        menuSel->duracionTransicion--;
+        if (menuSel->duracionTransicion % 20 > 10)
+        {
+            ventana.color(COLORES.ROJO);
+            ventana.texto1(505, 55, "GET READY!", 50, "Arial");
+            ventana.color(COLORES.BLANCO);
+            ventana.texto1(500, 50, "GET READY!", 50, "Arial");
+        }
+        if (menuSel->duracionTransicion <= 0)
+        {
+            ventana.reproducirAudio(NULL);
+            // jugador 1
+            if (menuSel->selP1 == LIUKANG)
+                menuSel->datosJuego->personaje1 = cargarPersonaje(menuSel->datosJuego->personaje1, *estadoJuego, "liu");
+            else if (menuSel->selP1 == SUBZERO)
+                menuSel->datosJuego->personaje1 = cargarPersonaje(menuSel->datosJuego->personaje1, *estadoJuego, "sub");
+
+            // jugador 2
+            if (menuSel->selP2 == SCORPION)
+                menuSel->datosJuego->personaje2 = cargarPersonaje2(menuSel->datosJuego->personaje2, *estadoJuego, "scor");
+            else if (menuSel->selP2 == RAIDEN)
+                menuSel->datosJuego->personaje2 = cargarPersonaje2(menuSel->datosJuego->personaje2, *estadoJuego, "raiden");
+
+            if (menuSel->datosJuego->personaje1)
+                menuSel->datosJuego->personaje1->frameActual = 0;
+            if (menuSel->datosJuego->personaje2)
+                menuSel->datosJuego->personaje2->frameActual = 0;
+            *estadoJuego = ESTADO_JUGANDO;
+        }
+    }
+}
+
+void animacionInicioPelea(MenuSeleccion *menuSel)
+{
+    if (menuSel->datosJuego->p1Listo)
+    {
+        if (menuSel->selP1 == LIUKANG)
+        {
+            ventana.muestraImagenEscalada(250, (ventana.altoVentana() / 2) - 100, 200, 250, menuSel->retrato->liuKangSeleccionado);
+            ventana.texto1(250, (ventana.altoVentana() / 2) + 200, "LIUKANG", 40, "Arial");
+        }
+        else if (menuSel->selP1 == SUBZERO)
+        {
+            ventana.muestraImagenEscalada(250, (ventana.altoVentana() / 2) - 100, 200, 250, menuSel->retrato->subZeroSeleccionado);
+            ventana.texto1(250, (ventana.altoVentana() / 2) + 200, "SUBZERO", 40, "Arial");
+        }
+    }
+    if (menuSel->datosJuego->p2Listo)
+    {
+        if (menuSel->selP2 == SCORPION)
+        {
+            ventana.muestraImagenEscalada(800, (ventana.altoVentana() / 2) - 100, 200, 250, menuSel->retrato->scorpionSeleccionado);
+            ventana.texto1(800, (ventana.altoVentana() / 2) + 200, "SCORPION", 40, "Arial");
+        }
+        else if (menuSel->selP2 == RAIDEN)
+        {
+            ventana.muestraImagenEscalada(800, (ventana.altoVentana() / 2) - 100, 200, 250, menuSel->retrato->raidenSeleccionado);
+            ventana.texto1(800, (ventana.altoVentana() / 2) + 200, "RAIDEN", 40, "Arial");
+        }
     }
 }

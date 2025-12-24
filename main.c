@@ -3,26 +3,61 @@
 #include "./src/graficos/graficos.h"
 #include "./src/juego/personaje.h"
 #include "./src/juego/juego.h"
+#include "./src/esp32/simplecontroller.h"
+#define DERECHA 15
+#define IZQUIERDA 18
+#define DEFENSA 19
+#define GOLPE1 22
+#define GOLPE2 23
+#define PATADA 21
+
+typedef struct ControlesESP32
+{
+    int derecha;
+    int izquierda;
+    int defensa;
+    int golpe1;
+    int golpe2;
+    int patada;
+} ControlesMando;
+
+void configurarEsp32(Board *esp32)
+{
+    if (esp32 != NULL)
+    {
+        esp32->pinMode(esp32, DERECHA, INPUT_PULLUP);
+        esp32->pinMode(esp32, IZQUIERDA, INPUT_PULLUP);
+        esp32->pinMode(esp32, GOLPE1, INPUT_PULLUP);
+        esp32->pinMode(esp32, GOLPE2, INPUT_PULLUP);
+        esp32->pinMode(esp32, PATADA, INPUT_PULLUP);
+        esp32->pinMode(esp32, DEFENSA, INPUT_PULLUP);
+    }
+}
 
 int main()
 {
     ventana.tamanioVentana(1280, 720);
     ventana.tituloVentana("Mortal Kombat");
     ventana.cambiarIconoVentana();
+    Board *esp32 = connectDevice("COM3", B115200);
+    configurarEsp32(esp32);
+    Controles controlesp2;
+    controlesp2.derecha = DERECHA;
+    controlesp2.izquierda = IZQUIERDA;
+    controlesp2.golpe = GOLPE1;
+    controlesp2.golpe2 = GOLPE2;
+    controlesp2.patada = PATADA;
+    controlesp2.defensa = DEFENSA;
     int tecla = ventana.teclaPresionada();
     int teclaSoltada = ventana.teclaSoltada();
-    Personaje *subZero = NULL;
-    Personaje *scorpio = NULL;
+    Personaje *jugador1 = NULL;
+    Personaje *jugador2 = NULL;
     EstadoPersonaje estado = QUIETO;
     EstadoJuego estadoJuego = ESTADO_INICIO;
     Fondos *fondosJuego = crearFondos();
-    subZero = cargarPersonaje(subZero, estado);
-    subZero->frameActual = 0;
-    scorpio = cargarPersonaje2(scorpio, estado);
-    scorpio->frameActual = 0;
     Juego *juego = (Juego *)malloc(sizeof(Juego));
-    juego->personaje1 = subZero;
-    juego->personaje2 = scorpio;
+    juego->personaje1 = jugador1;
+    juego->personaje2 = jugador2;
     juego->fondosJuego = fondosJuego;
     juego->tecla = tecla;
     juego->teclaSoltada = teclaSoltada;
@@ -36,6 +71,7 @@ int main()
     menuSel->selP1 = LIUKANG;
     menuSel->selP2 = SCORPION;
     menuSel->datosJuego = juego;
+    menuSel->duracionTransicion = 50;
     while (tecla != TECLAS.ESCAPE)
     {
         tecla = ventana.teclaPresionada();
@@ -48,9 +84,9 @@ int main()
             menuLoop(menuSel, &estadoJuego);
         }
 
-        if (estadoJuego == ESTADO_JUGANDO)
+        else if (estadoJuego == ESTADO_JUGANDO)
         {
-            gameLoop(juego);
+            gameLoop(juego, menuSel);
         }
         ventana.actualizaVentana();
         ventana.espera(50);
@@ -64,6 +100,8 @@ int main()
     free(menuSel->cursorP2);
     liberarImagenes(menuSel->retrato);
     free(menuSel->retrato);
+    free(menuSel);
+    free(fondosJuego);
     ventana.cierraVentana();
     return 0;
 }

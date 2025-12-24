@@ -2,6 +2,8 @@
 #define PERSONAJE_H_
 
 #include "../graficos/graficos.h"
+struct MenuSeleccion;
+typedef struct MenuSeleccion MenuSeleccion;
 
 typedef struct {
     int derecha;
@@ -30,6 +32,7 @@ typedef struct
     Imagen *animPatada[4];
     Imagen *animGolpeado[3];
     Imagen *animDefensa[3];
+    Imagen *animAbatido[7];
     Controles controls;
 } Personaje;
 
@@ -42,7 +45,7 @@ typedef enum {
     PATEANDO,
     GOLPEADO,
     DEFENSA,
-    MUERTO,
+    ABATIDO,
 } EstadoPersonaje;
 
 /**
@@ -52,7 +55,7 @@ typedef enum {
  * @param estado Enumeracion que contiene los estados del personaje
  * @return Personaje* 
  */
-Personaje *cargarPersonaje(Personaje *personaje, EstadoPersonaje estado);
+Personaje *cargarPersonaje(Personaje *personaje, EstadoPersonaje estado, const char *nombrePersonaje);
 
 /**
  * @brief Funcion que crea un personaje desde sus atributos hasta cada sprite que lo compone
@@ -61,7 +64,7 @@ Personaje *cargarPersonaje(Personaje *personaje, EstadoPersonaje estado);
  * @param estado Enumeracion que contiene los estados del personaje
  * @return Personaje* 
  */
-Personaje *cargarPersonaje2(Personaje *personaje, EstadoPersonaje estado);
+Personaje *cargarPersonaje2(Personaje *personaje, EstadoPersonaje estado, const char *nombrePersonaje);
 
 /**
  * @brief Funcion que se encarga de llenar el puntero **sprites y los arreglos de animacion para cada personaje
@@ -104,12 +107,12 @@ void actualizarMovimiento(Personaje *personaje, int tecla, int teclaSoltada);
 void liberarPersonajeMemoria(Personaje *personaje);
 
 /**
- * @brief Funcion que se encarga de actualizar la barra de vida del personaje de acuerdo al campo vida de la struct Personaje
+ * @brief Funcion que se encarga ed dibujar la barra de vida del personaje de acuerdo al campo vida de la struct Personaje
  * 
  * @param personaje Puntero a la struct Personaje para acceder y modificar todos sus campos
  * @param tecla tipo de dato int que retorna o reciba el valor de la tecla presionada
  */
-void actualizarVida(Personaje *personaje, int tecla);
+void dibujarHUD(Personaje *personaje, int tecla, MenuSeleccion *menuSel);
 
 /**
  * @brief Funcion que se encarga ed dibujar la barra de vida del personaje de acuerdo al campo vida de la struct Personaje
@@ -117,23 +120,8 @@ void actualizarVida(Personaje *personaje, int tecla);
  * @param personaje Puntero a la struct Personaje para acceder y modificar todos sus campos
  * @param tecla tipo de dato int que retorna o reciba el valor de la tecla presionada
  */
-void dibujarHUD(Personaje *personaje, int tecla);
+void dibujarHUDP2(Personaje *personaje, int tecla, MenuSeleccion *menuSel);
 
-/**
- * @brief Funcion que se encarga de actualizar la barra de vida del personaje de acuerdo al campo vida de la struct Personaje
- * 
- * @param personaje Puntero a la struct Personaje para acceder y modificar todos sus campos
- * @param tecla tipo de dato int que retorna o reciba el valor de la tecla presionada
- */
-void actualizarVidaP2(Personaje *personaje, int tecla);
-
-/**
- * @brief Funcion que se encarga ed dibujar la barra de vida del personaje de acuerdo al campo vida de la struct Personaje
- * 
- * @param personaje Puntero a la struct Personaje para acceder y modificar todos sus campos
- * @param tecla tipo de dato int que retorna o reciba el valor de la tecla presionada
- */
-void dibujarHUDP2(Personaje *personaje, int tecla);
 
 /**
  * @brief Funcion que detecta la colision de personaje1 y personaje2 acorde a sus coordenadas

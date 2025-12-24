@@ -9,6 +9,9 @@ typedef struct Fondos
     Imagen *fondoStage;
 } Fondos;
 
+typedef struct Personaje *personaje1;
+typedef struct Personaje *personaje2;
+
 //campos necesarios para el Juego, varios apuntan a otras structs
 typedef struct
 {
@@ -38,6 +41,10 @@ typedef struct
     Imagen *scorpion;
     Imagen *subZero;
     Imagen *raiden;
+    Imagen *liuKangSeleccionado;
+    Imagen *scorpionSeleccionado;
+    Imagen *subZeroSeleccionado;
+    Imagen *raidenSeleccionado;
     Imagen *fondoSeleccion;
     Imagen *contenedorRetrato;
     Imagen *cursorSelector;
@@ -62,7 +69,7 @@ typedef enum
 } Personajes;
 
 //struct que alamcena punteros a otras structs para mutar/cambiar estado dentro del menu y detectar selecciones de jugadoresa
-typedef struct
+typedef struct MenuSeleccion
 {
     AssetsRetratos *retrato;
     CursorSeleccion *cursorP1;
@@ -70,6 +77,7 @@ typedef struct
     Personajes selP1;
     Personajes selP2;
     Juego *datosJuego;
+    int duracionTransicion;
 } MenuSeleccion;
 
 /**
@@ -84,7 +92,7 @@ void dibujarEscenario(Fondos *fondos);
  *
  * @param juego Puntero a la struct juego que contiene los campos del mismo asi como punteros a otras structs
  */
-void animacionPersonaje(Juego *juego);
+void animacionPersonaje(Juego *juego, MenuSeleccion *menuSel);
 
 /**
  * @brief Funcion que crea la imagen del escenario
@@ -94,7 +102,7 @@ void animacionPersonaje(Juego *juego);
 Fondos *crearFondos();
 
 /**
- * @brief Funcion que inicia el juego en estadp ESTADO_INICIO, que fungue como un inicialiador de menu
+ * @brief Funcion que inicia el juego en estado ESTADO_INICIO, que funge como un inicialiador de menu
  *
  * @param juego Struct de tipo puntero que apunta a todo Juego, que incluye campos de Fondo para la creacion de imaganes de los stages
  * @param estadoJuego Puntero a la enum EstadoJuego inicializada desde el main, para trabajar con el comportamiento de estados y pasar ed JUGANDO, a INICIO, y visceversa
@@ -106,7 +114,7 @@ void iniciarJuego(Juego *juego, EstadoJuego *estadoJuego);
  *
  * @param juego Puntero a la struct Juego que contiene los campos de Personaje, Fondos entre otras mas
  */
-void gameLoop(Juego *juego);
+void gameLoop(Juego *juego, MenuSeleccion *menuSel);
 
 /**
  * @brief Funcion que instancia, inicialioza y crea los retratos de cada jugador asi como los cursores de seleccion
@@ -165,4 +173,11 @@ void liberarImagenes(AssetsRetratos *retratosPersonajes);
  * @param estadoJuego Pubntero a la enum EstadoJuego
  */
 void menuLoop(MenuSeleccion *menuSel, EstadoJuego *estadoJuego);
+
+/**
+ * @brief Funcion que se encarga de inciar un timer para pasar el estado de juego ESTADO_JUGANDO
+ * 
+ * @param menuSel 
+ */
+void animacionInicioPelea(MenuSeleccion *menuSel);
 #endif

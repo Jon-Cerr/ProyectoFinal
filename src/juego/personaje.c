@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../graficos/graficos.h"
 #include "./personaje.h"
+#include "./juego.h"
 
-Personaje *cargarPersonaje(Personaje *personaje, EstadoPersonaje estado)
+Personaje *cargarPersonaje(Personaje *personaje, EstadoPersonaje estado, const char *nombrePersonaje)
 {
     if (personaje == NULL)
     {
@@ -27,21 +27,18 @@ Personaje *cargarPersonaje(Personaje *personaje, EstadoPersonaje estado)
     personaje->controls.patada = TECLAS.LETRA_W;
     personaje->controls.defensa = TECLAS.LETRA_Z;
     personaje->defendiendo = false;
-    personaje->sprites = (Imagen **)malloc(sizeof(Imagen *) * 60);
+    personaje->sprites = (Imagen **)malloc(sizeof(Imagen *) * 70);
 
     // Llenar la memoria reservada en NULL para evitar bugs
-    for (int z = 0; z < 60; z++)
+    for (int z = 0; z < 70; z++)
     {
         personaje->sprites[z] = NULL;
     }
-    int indiceActual = 0;
-
-    const char *nombrePersonaje = "sub";
     cargarSprites(personaje, nombrePersonaje);
     return personaje;
 }
 
-Personaje *cargarPersonaje2(Personaje *personaje, EstadoPersonaje estado)
+Personaje *cargarPersonaje2(Personaje *personaje, EstadoPersonaje estado, const char *nombrePersonaje)
 {
     if (personaje == NULL)
     {
@@ -64,14 +61,13 @@ Personaje *cargarPersonaje2(Personaje *personaje, EstadoPersonaje estado)
     personaje->controls.patada = TECLAS.LETRA_I;
     personaje->controls.defensa = TECLAS.LETRA_M;
     personaje->defendiendo = false;
-    personaje->sprites = (Imagen **)malloc(sizeof(Imagen *) * 60);
+    personaje->sprites = (Imagen **)malloc(sizeof(Imagen *) * 70);
 
     // Llenar la memoria reservada en NULL para evitar bugs
-    for (int z = 0; z < 60; z++)
+    for (int z = 0; z < 70; z++)
     {
         personaje->sprites[z] = NULL;
     }
-    const char *nombrePersonaje = "scor";
     cargarSprites(personaje, nombrePersonaje);
     return personaje;
 }
@@ -212,6 +208,26 @@ void cargarSprites(Personaje *personaje, const char *nombrePersonaje)
         personaje->animDefensa[o] = personaje->sprites[indiceActual];
         indiceActual++;
     }
+
+    for (int p = 0; p < 7; p++)
+    {
+        char nombreArchivo[100];
+        sprintf(nombreArchivo, "./sprites/abatido/%s_abatido_%d.bmp", nombrePersonaje, (p + 1));
+        char nombreArchivoMask[100];
+        sprintf(nombreArchivoMask, "./sprites/abatido/%s_abatido_%d_mask.bmp", nombrePersonaje, (p + 1));
+        personaje->sprites[indiceActual] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
+        if (personaje->sprites[indiceActual] == NULL)
+        {
+            ventana.muestraMensaje("No se pudieron cargar los sprites.");
+            printf("ERROR: No se encontró el archivo: %s\n", nombreArchivo);
+        }
+        else
+        {
+            printf("Cargado con éxito: %s\n", nombreArchivo);
+        }
+        personaje->animAbatido[p] = personaje->sprites[indiceActual];
+        indiceActual++;
+    }
 }
 
 void dibujarPersonaje(Personaje *personaje)
@@ -251,10 +267,29 @@ void dibujarPersonaje(Personaje *personaje)
     {
         ventana.muestraImagenEscalada(personaje->x, personaje->y, 154, 190, personaje->animDefensa[personaje->frameActual]);
     }
+    // si el estado es ABATIDO, se dibujan los sprites de "ABATIDO"
+    else if (personaje->estado == ABATIDO)
+    {
+        ventana.muestraImagenEscalada(personaje->x, personaje->y, 154, 190, personaje->animAbatido[personaje->frameActual]);
+    }
 }
 
 void cambiarEstado(Personaje *personaje, int tecla, int teclaSoltada)
 {
+    if (personaje->vida <= 0)
+    {
+        personaje->moviendoDerecha = false;
+        personaje->moviendoIzquierda = false;
+        if (personaje->estado != ABATIDO)
+        {
+            personaje->estado = ABATIDO;
+            personaje->frameActual = 0;
+            personaje->totalFrames = 7;
+            ventana.reproducirAudio("./assets/audio/finish.wav");
+        }
+        return;
+    }
+
     // deteccion de teclas para evitar colisiones con el main
     if (tecla == personaje->controls.derecha)
         personaje->moviendoDerecha = true;
@@ -360,7 +395,6 @@ void cambiarEstado(Personaje *personaje, int tecla, int teclaSoltada)
 
 void actualizarMovimiento(Personaje *personaje, int tecla, int teclaSoltada)
 {
-
     // cambiar el estado del personaje pasado desde el main, asi como la tecla presionada y soltada para evitar colisiones con el main
     cambiarEstado(personaje, tecla, teclaSoltada);
     personaje->frameActual++; // se incrementa el frame
@@ -394,18 +428,7 @@ void actualizarMovimiento(Personaje *personaje, int tecla, int teclaSoltada)
     }
 }
 
-void actualizarVida(Personaje *personaje, int tecla)
-{
-    if (tecla == TECLAS.LETRA_U || tecla == TECLAS.LETRA_I || tecla == TECLAS.LETRA_O)
-    {
-        if (personaje->vida > 0)
-        {
-            personaje->vida -= 2;
-        }
-    }
-}
-
-void dibujarHUD(Personaje *personaje, int tecla)
+void dibujarHUD(Personaje *personaje, int tecla, MenuSeleccion *menuSel)
 {
     ventana.color(COLORES.ROJO);
     ventana.rectanguloRelleno(70, 50, 470, 80);
@@ -415,20 +438,17 @@ void dibujarHUD(Personaje *personaje, int tecla)
 
     ventana.color(COLORES.BLANCO);
     ventana.rectangulo(70, 50, 470, 80);
-}
-
-void actualizarVidaP2(Personaje *personaje, int tecla)
-{
-    if (tecla == TECLAS.LETRA_Q || tecla == TECLAS.LETRA_W || tecla == TECLAS.LETRA_E)
+    if (menuSel->selP1 == LIUKANG)
     {
-        if (personaje->vida > 0)
-        {
-            personaje->vida -= 2;
-        }
+        ventana.texto1(70, 100, "LIUKANG", 30, "Arial");
+    }
+    else if (menuSel->selP1 == SUBZERO)
+    {
+        ventana.texto1(70, 100, "SUB ZERO", 30, "Arial");
     }
 }
 
-void dibujarHUDP2(Personaje *personaje, int tecla)
+void dibujarHUDP2(Personaje *personaje, int tecla, MenuSeleccion *menuSel)
 {
     ventana.color(COLORES.ROJO);
     ventana.rectanguloRelleno(800, 50, 1200, 80);
@@ -438,13 +458,22 @@ void dibujarHUDP2(Personaje *personaje, int tecla)
 
     ventana.color(COLORES.BLANCO);
     ventana.rectangulo(800, 50, 1200, 80);
+    ventana.color(COLORES.BLANCO);
+    if (menuSel->selP2 == SCORPION)
+    {
+        ventana.texto1(800, 100, "SCORPION", 30, "Arial");
+    }
+    else if (menuSel->selP2 == RAIDEN)
+    {
+        ventana.texto1(800, 100, "RAIDEN", 30, "Arial");
+    }
 }
 
 void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla)
 {
     // distancia absoluta entre personaje1 y personaje2
     int distancia = abs(personaje1->x - personaje2->x);
-    int minColision = 150; // colision minima para detectar el golpe
+    int minColision = 120; // colision minima para detectar el golpe
     if (distancia < minColision)
     {
         if (personaje1->estado == GOLPEANDO || personaje1->estado == GOLPEANDO2 || personaje1->estado == PATEANDO)
@@ -456,6 +485,10 @@ void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla)
                     personaje2->estado = GOLPEADO;
                     personaje2->frameActual = 0;
                     personaje2->vida -= 1;
+                }
+                else if (personaje2->vida == 0)
+                {
+                    personaje2->estado = ABATIDO;
                 }
             }
         }
@@ -469,6 +502,10 @@ void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla)
                     personaje1->frameActual = 0;
                     personaje1->vida -= 1;
                 }
+                else if (personaje1->vida == 0)
+                {
+                    personaje1->estado = ABATIDO;
+                }
             }
         }
     }
@@ -480,7 +517,7 @@ void liberarPersonajeMemoria(Personaje *personaje)
     {
         return;
     }
-    for (int i = 0; i < 60; i++)
+    for (int i = 0; i < 70; i++)
     {
         if (personaje->sprites[i] != NULL)
         {
