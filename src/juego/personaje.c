@@ -27,6 +27,7 @@ Personaje *cargarPersonaje(Personaje *personaje, EstadoPersonaje estado, const c
     personaje->controls.patada = TECLAS.LETRA_W;
     personaje->controls.defensa = TECLAS.LETRA_Z;
     personaje->defendiendo = false;
+    personaje->fatalityGolpe = NULL;
     personaje->sprites = (Imagen **)malloc(sizeof(Imagen *) * 70);
 
     // Llenar la memoria reservada en NULL para evitar bugs
@@ -61,6 +62,7 @@ Personaje *cargarPersonaje2(Personaje *personaje, EstadoPersonaje estado, const 
     personaje->controls.patada = TECLAS.LETRA_I;
     personaje->controls.defensa = TECLAS.LETRA_M;
     personaje->defendiendo = false;
+    personaje->fatalityGolpe = NULL;
     personaje->sprites = (Imagen **)malloc(sizeof(Imagen *) * 70);
 
     // Llenar la memoria reservada en NULL para evitar bugs
@@ -285,7 +287,6 @@ void cambiarEstado(Personaje *personaje, int tecla, int teclaSoltada)
             personaje->estado = ABATIDO;
             personaje->frameActual = 0;
             personaje->totalFrames = 7;
-            ventana.reproducirAudio("./assets/audio/finish.wav");
         }
         return;
     }
@@ -469,26 +470,35 @@ void dibujarHUDP2(Personaje *personaje, int tecla, MenuSeleccion *menuSel)
     }
 }
 
-void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla)
+void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla, MenuSeleccion *menuSel, EstadoJuego *estado)
 {
     // distancia absoluta entre personaje1 y personaje2
     int distancia = abs(personaje1->x - personaje2->x);
-    int minColision = 120; // colision minima para detectar el golpe
+    int minColision = 100; // colision minima para detectar el golpe
+    //comparar distancias para hacer efectiva la colision
     if (distancia < minColision)
     {
+        // verificcar que el personaje se encuentre en los siguientes estados para hacer valida la colision
         if (personaje1->estado == GOLPEANDO || personaje1->estado == GOLPEANDO2 || personaje1->estado == PATEANDO)
         {
+            // solo se hara valido si la vida del personaje golpeado es mayor a 0, y si el personaje no se esta defendiendo para bajar la vida
             if (personaje2->vida > 0)
             {
                 if (!(personaje2->defendiendo))
                 {
-                    personaje2->estado = GOLPEADO;
-                    personaje2->frameActual = 0;
-                    personaje2->vida -= 1;
-                }
-                else if (personaje2->vida == 0)
-                {
-                    personaje2->estado = ABATIDO;
+                    personaje2->vida -= 10;
+                    if (personaje2->vida <= 0)
+                    {
+                        personaje2->vida = 0;
+                        personaje2->estado = ABATIDO;
+                        personaje2->frameActual = 0;
+                        ventana.reproducirAudio("./assets/audio/finish.wav");
+                    }
+                    else
+                    {
+                        personaje2->estado = GOLPEADO;
+                        personaje2->frameActual = 0;
+                    }
                 }
             }
         }
@@ -498,15 +508,131 @@ void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla)
             {
                 if (!(personaje1->defendiendo))
                 {
-                    personaje1->estado = GOLPEADO;
-                    personaje1->frameActual = 0;
-                    personaje1->vida -= 1;
-                }
-                else if (personaje1->vida == 0)
-                {
-                    personaje1->estado = ABATIDO;
+                    personaje1->vida -= 10;
+                    if (personaje1->vida <= 0)
+                    {
+                        personaje1->vida = 0;
+                        personaje1->estado = ABATIDO;
+                        personaje1->frameActual = 0;
+                        ventana.reproducirAudio("./assets/audio/finish.wav");
+                        return;
+                    }
+                    else
+                    {
+                        personaje1->estado = GOLPEADO;
+                        personaje1->frameActual = 0;
+                    }
                 }
             }
+        }
+    }
+
+    //logica para el personaje 1 para activar el fatality
+    if (personaje2->estado == ABATIDO && distancia < 150)
+    {
+        if (tecla == TECLAS.LETRA_Q)
+        {
+            cargarAnimacionFatality(personaje1, personaje2, menuSel);
+            *estado = ESTADO_FATALITY;
+        }
+    }
+    //logica para el personaje 2 para activar el fatality
+    if (personaje1->estado == ABATIDO && distancia < 150)
+    {
+        if (tecla == TECLAS.LETRA_U)
+        {
+            cargarAnimacionFatality(personaje2, personaje1, menuSel);
+            *estado = ESTADO_FATALITY;
+        }
+    }
+}
+
+void cargarAnimacionFatality(Personaje *ganador, Personaje *perdedor, MenuSeleccion *menuSel)
+{
+    // buffer para el nombre del ganador
+    char nombreGanador[20];
+    // se crea la memoria para las animacones del fatality
+    ganador->fatalityGolpe = (Fatality *)malloc(sizeof(Fatality));
+    ganador->fatalityGolpe->frameActual = 0;
+    //condiciones para saber de que personaje se cargaran los frames y acoerde a eso establecer el numero de frames
+    if (menuSel->selP1 == LIUKANG)
+    {
+        ganador->fatalityGolpe->totalFrames = 16;
+        sprintf(nombreGanador, "liu");
+    }
+    else if (menuSel->selP1 == SUBZERO)
+    {
+        ganador->fatalityGolpe->totalFrames = 16;
+        sprintf(nombreGanador, "sub");
+    }
+    if (menuSel->selP2 == SCORPION)
+    {
+        ganador->fatalityGolpe->totalFrames = 8;
+        sprintf(nombreGanador, "scor");
+    }
+    else if (menuSel->selP2 == RAIDEN)
+    {
+        ganador->fatalityGolpe->totalFrames = 16;
+        sprintf(nombreGanador, "raiden");
+    }
+
+    // reservar memoria para las imagenes acorde a los frames establecidos, Imagen** es de doble puntero pues son imagenes dinamicas
+    ganador->fatalityGolpe->personajeFatality = (Imagen **)malloc(sizeof(Imagen *) * ganador->fatalityGolpe->totalFrames);
+    ganador->fatalityGolpe->personajeAbatido = (Imagen **)malloc(sizeof(Imagen *) * ganador->fatalityGolpe->totalFrames);
+    ganador->fatalityGolpe->dibujoTecnica = (Imagen **)malloc(sizeof(Imagen *) * ganador->fatalityGolpe->totalFrames);
+
+    // inciializar la memoria en NULL para evitar crasheos
+    for (int z = 0; z < ganador->fatalityGolpe->totalFrames; z++)
+    {
+        ganador->fatalityGolpe->personajeFatality[z] = NULL;
+        ganador->fatalityGolpe->personajeAbatido[z] = NULL;
+        ganador->fatalityGolpe->dibujoTecnica[z] = NULL;
+    }
+
+    // llenar o buscar los archivos bmp acorde al nombre del personaje/ganador y el nmumero de frames
+    for (int i = 0; i < ganador->fatalityGolpe->totalFrames; i++)
+    {
+        char nombreArchivo[100];
+        char nombreArchivoMask[100];
+        sprintf(nombreArchivo, "./sprites/fatalitys/%s/%s_fatality_%d.bmp", nombreGanador, nombreGanador, (i + 1));
+        sprintf(nombreArchivoMask, "./sprites/fatalitys/%s/%s_fatality_%d_mask.bmp", nombreGanador, nombreGanador, (i + 1));
+        ganador->fatalityGolpe->personajeFatality[i] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
+        sprintf(nombreArchivo, "./sprites/fatalitys/%s/%s_fatality_golpe_%d.bmp", nombreGanador, nombreGanador, (i + 1));
+        sprintf(nombreArchivoMask, "./sprites/fatalitys/%s/%s_fatality_golpe_%d_mask.bmp", nombreGanador, nombreGanador, (i + 1));
+        ganador->fatalityGolpe->personajeAbatido[i] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
+        sprintf(nombreArchivo, "./sprites/fatalitys/%s/%s_fatality_tecnica_%d.bmp", nombreGanador, nombreGanador, (i + 1));
+        sprintf(nombreArchivoMask, "./sprites/fatalitys/%s/%s_fatality_tecnica_%d_mask.bmp", nombreGanador, nombreGanador, (i + 1));
+        ganador->fatalityGolpe->dibujoTecnica[i] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
+        if (ganador->fatalityGolpe->personajeFatality[i] == NULL)
+        {
+            printf("Aviso: No se encontro el frame %d para el fatality de %s\n", i + 1, nombreGanador);
+        }
+    }
+}
+
+void dibujarEscenaFatality(Personaje *ganador, Personaje *perdedor)
+{
+    // si falla la reserva de memoria, retornar NULL para evitar crasheos
+    if (ganador->fatalityGolpe == NULL)
+    {
+        return;
+    }
+    //inicializamos el frame al frame actual de la animacion del ganador
+    int frame = ganador->fatalityGolpe->frameActual;
+    if (frame < ganador->fatalityGolpe->totalFrames)
+    {
+        ventana.muestraImagenEscalada(ganador->x, ganador->y, 154, 190, ganador->fatalityGolpe->personajeFatality[frame]);
+        if (frame >= 4)
+        {
+            ventana.muestraImagenEscalada(perdedor->x - 80, perdedor->y, 154, 190, ganador->fatalityGolpe->dibujoTecnica[frame]);
+        }
+        if (frame >= 5)
+        {
+            ventana.muestraImagenEscalada(perdedor->x - 50, perdedor->y, 130, 190, ganador->fatalityGolpe->personajeAbatido[frame]);
+        }
+        else
+        {
+            dibujarPersonaje(perdedor);
         }
     }
 }
@@ -514,16 +640,41 @@ void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla)
 void liberarPersonajeMemoria(Personaje *personaje)
 {
     if (personaje == NULL)
-    {
         return;
-    }
-    for (int i = 0; i < 70; i++)
+    if (personaje->sprites != NULL)
     {
-        if (personaje->sprites[i] != NULL)
+        for (int i = 0; i < 70; i++)
         {
-            ventana.eliminaImagen(personaje->sprites[i]);
+            if (personaje->sprites[i] != NULL)
+            {
+                ventana.eliminaImagen(personaje->sprites[i]);
+                personaje->sprites[i] = NULL;
+            }
         }
+        free(personaje->sprites);
     }
-    free(personaje->sprites);
+
+    if (personaje->fatalityGolpe != NULL)
+    {
+        for (int i = 0; i < personaje->fatalityGolpe->totalFrames; i++)
+        {
+            if (personaje->fatalityGolpe->personajeFatality && personaje->fatalityGolpe->personajeFatality[i])
+                ventana.eliminaImagen(personaje->fatalityGolpe->personajeFatality[i]);
+            if (personaje->fatalityGolpe->personajeAbatido && personaje->fatalityGolpe->personajeAbatido[i])
+                ventana.eliminaImagen(personaje->fatalityGolpe->personajeAbatido[i]);
+            if (personaje->fatalityGolpe->dibujoTecnica && personaje->fatalityGolpe->dibujoTecnica[i])
+                ventana.eliminaImagen(personaje->fatalityGolpe->dibujoTecnica[i]);
+        }
+        if (personaje->fatalityGolpe->personajeFatality)
+            free(personaje->fatalityGolpe->personajeFatality);
+        if (personaje->fatalityGolpe->personajeAbatido)
+            free(personaje->fatalityGolpe->personajeAbatido);
+        if (personaje->fatalityGolpe->dibujoTecnica)
+            free(personaje->fatalityGolpe->dibujoTecnica);
+
+        free(personaje->fatalityGolpe);
+        personaje->fatalityGolpe = NULL;
+    }
+
     free(personaje);
 }

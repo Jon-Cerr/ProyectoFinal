@@ -4,6 +4,7 @@
 #include "./src/juego/personaje.h"
 #include "./src/juego/juego.h"
 #include "./src/esp32/simplecontroller.h"
+#include "./src/juego/podio_marcadores.h"
 #define DERECHA 15
 #define IZQUIERDA 18
 #define DEFENSA 19
@@ -11,43 +12,11 @@
 #define GOLPE2 23
 #define PATADA 21
 
-typedef struct ControlesESP32
-{
-    int derecha;
-    int izquierda;
-    int defensa;
-    int golpe1;
-    int golpe2;
-    int patada;
-} ControlesMando;
-
-void configurarEsp32(Board *esp32)
-{
-    if (esp32 != NULL)
-    {
-        esp32->pinMode(esp32, DERECHA, INPUT_PULLUP);
-        esp32->pinMode(esp32, IZQUIERDA, INPUT_PULLUP);
-        esp32->pinMode(esp32, GOLPE1, INPUT_PULLUP);
-        esp32->pinMode(esp32, GOLPE2, INPUT_PULLUP);
-        esp32->pinMode(esp32, PATADA, INPUT_PULLUP);
-        esp32->pinMode(esp32, DEFENSA, INPUT_PULLUP);
-    }
-}
-
 int main()
 {
     ventana.tamanioVentana(1280, 720);
     ventana.tituloVentana("Mortal Kombat");
     ventana.cambiarIconoVentana();
-    Board *esp32 = connectDevice("COM3", B115200);
-    configurarEsp32(esp32);
-    Controles controlesp2;
-    controlesp2.derecha = DERECHA;
-    controlesp2.izquierda = IZQUIERDA;
-    controlesp2.golpe = GOLPE1;
-    controlesp2.golpe2 = GOLPE2;
-    controlesp2.patada = PATADA;
-    controlesp2.defensa = DEFENSA;
     int tecla = ventana.teclaPresionada();
     int teclaSoltada = ventana.teclaSoltada();
     Personaje *jugador1 = NULL;
@@ -72,6 +41,7 @@ int main()
     menuSel->selP2 = SCORPION;
     menuSel->datosJuego = juego;
     menuSel->duracionTransicion = 50;
+    cargarPodio(juego);
     while (tecla != TECLAS.ESCAPE)
     {
         tecla = ventana.teclaPresionada();
@@ -86,7 +56,16 @@ int main()
 
         else if (estadoJuego == ESTADO_JUGANDO)
         {
-            gameLoop(juego, menuSel);
+            gameLoop(juego, menuSel, &estadoJuego);
+        }
+        else if (estadoJuego == ESTADO_FATALITY)
+        {
+            dibujarEscenario(fondosJuego);
+            ejecutarLogicaFatality(juego, &estadoJuego, menuSel);
+        }
+        else if (estadoJuego == ESTADO_PODIO)
+        {
+            mostrarMarcadores(&estadoJuego, juego);
         }
         ventana.actualizaVentana();
         ventana.espera(50);

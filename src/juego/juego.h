@@ -1,6 +1,10 @@
 #ifndef JUEGO_H_
 #define JUEGO_H_
 #include "./personaje.h"
+#include "./podio_marcadores.h"
+
+typedef struct Personaje *personaje1;
+typedef struct Personaje *personaje2;
 
 //integrar imagenes/almacenar  punteros
 typedef struct Fondos
@@ -9,11 +13,8 @@ typedef struct Fondos
     Imagen *fondoStage;
 } Fondos;
 
-typedef struct Personaje *personaje1;
-typedef struct Personaje *personaje2;
-
 //campos necesarios para el Juego, varios apuntan a otras structs
-typedef struct
+typedef struct Juego
 {
     Personaje *personaje1;
     Personaje *personaje2;
@@ -24,15 +25,8 @@ typedef struct
     int identificadorP2;
     bool p1Listo;
     bool p2Listo;
+    RegistroGanador nuevoRegistro[5];
 } Juego;
-
-//estados del juego
-typedef enum
-{
-    ESTADO_INICIO,
-    ESTADO_MENUSELECCION,
-    ESTADO_JUGANDO
-} EstadoJuego;
 
 //integrar imagenes/almacenar punteros de imagenes con los retratos de los personajes disponibles
 typedef struct
@@ -92,7 +86,7 @@ void dibujarEscenario(Fondos *fondos);
  *
  * @param juego Puntero a la struct juego que contiene los campos del mismo asi como punteros a otras structs
  */
-void animacionPersonaje(Juego *juego, MenuSeleccion *menuSel);
+void animacionPersonaje(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado);
 
 /**
  * @brief Funcion que crea la imagen del escenario
@@ -114,7 +108,7 @@ void iniciarJuego(Juego *juego, EstadoJuego *estadoJuego);
  *
  * @param juego Puntero a la struct Juego que contiene los campos de Personaje, Fondos entre otras mas
  */
-void gameLoop(Juego *juego, MenuSeleccion *menuSel);
+void gameLoop(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado);
 
 /**
  * @brief Funcion que instancia, inicialioza y crea los retratos de cada jugador asi como los cursores de seleccion
@@ -180,4 +174,13 @@ void menuLoop(MenuSeleccion *menuSel, EstadoJuego *estadoJuego);
  * @param menuSel 
  */
 void animacionInicioPelea(MenuSeleccion *menuSel);
+
+/**
+ * @brief Funcion que se encarga de dibujar y de la logica del fqatality acorde al personaje que gano y que perdio, tomando como argumentos punteros a la Juego, y a las enum EstadoJuego y a la struct MenuSeleccion
+ * 
+ * @param juego Puntero a la struct Juego para acceder a los campos de los personajes 
+ * @param estado Puntero a la enum EstadoJuego para acceder y modificar sus estados acorde a ciertos comportamientos condicionales
+ * @param menuSel Puntero a la struct MenuSeleccion para acceder a los campos correspondiente y poder modificarlos para cambiar el comportamiento del cilo
+ */
+void ejecutarLogicaFatality(Juego *juego, EstadoJuego *estado,  MenuSeleccion *menuSel);
 #endif

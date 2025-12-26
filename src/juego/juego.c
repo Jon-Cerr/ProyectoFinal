@@ -21,7 +21,7 @@ Fondos *crearFondos()
     return fondos;
 }
 
-void animacionPersonaje(Juego *juego, MenuSeleccion *menuSel)
+void animacionPersonaje(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado)
 {
     actualizarMovimiento(juego->personaje1, juego->tecla, juego->teclaSoltada);
     dibujarPersonaje(juego->personaje1);
@@ -29,7 +29,7 @@ void animacionPersonaje(Juego *juego, MenuSeleccion *menuSel)
     dibujarPersonaje(juego->personaje2);
     dibujarHUD(juego->personaje1, juego->tecla, menuSel);
     dibujarHUDP2(juego->personaje2, juego->tecla, menuSel);
-    detectarColision(juego->personaje1, juego->personaje2, juego->tecla);
+    detectarColision(juego->personaje1, juego->personaje2, juego->tecla, menuSel, estado);
 }
 
 void iniciarJuego(Juego *juego, EstadoJuego *estadoJuego)
@@ -67,10 +67,10 @@ void iniciarJuego(Juego *juego, EstadoJuego *estadoJuego)
     }
 }
 
-void gameLoop(Juego *juego, MenuSeleccion *menuSel)
+void gameLoop(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado)
 {
     dibujarEscenario(juego->fondosJuego);
-    animacionPersonaje(juego, menuSel);
+    animacionPersonaje(juego, menuSel, estado);
 }
 
 AssetsRetratos *crearRetratos()
@@ -182,6 +182,10 @@ void menuLoop(MenuSeleccion *menuSel, EstadoJuego *estadoJuego)
     crearMenuSeleccion(menuSel->retrato);
     ventana.color(COLORES.BLANCO);
     int tecla = menuSel->datosJuego->tecla;
+    if (tecla == TECLAS.LETRA_V)
+    {
+        *estadoJuego = ESTADO_PODIO;
+    }
     if (!(menuSel->datosJuego->p1Listo))
     {
         if (tecla == TECLAS.LETRA_S)
@@ -264,13 +268,71 @@ void animacionInicioPelea(MenuSeleccion *menuSel)
     {
         if (menuSel->selP2 == SCORPION)
         {
-            ventana.muestraImagenEscalada(800, (ventana.altoVentana() / 2) - 100, 200, 250, menuSel->retrato->scorpionSeleccionado);
-            ventana.texto1(800, (ventana.altoVentana() / 2) + 200, "SCORPION", 40, "Arial");
+            ventana.muestraImagenEscalada(830, (ventana.altoVentana() / 2) - 100, 200, 250, menuSel->retrato->scorpionSeleccionado);
+            ventana.texto1(830, (ventana.altoVentana() / 2) + 200, "SCORPION", 40, "Arial");
         }
         else if (menuSel->selP2 == RAIDEN)
         {
-            ventana.muestraImagenEscalada(800, (ventana.altoVentana() / 2) - 100, 200, 250, menuSel->retrato->raidenSeleccionado);
-            ventana.texto1(800, (ventana.altoVentana() / 2) + 200, "RAIDEN", 40, "Arial");
+            ventana.muestraImagenEscalada(830, (ventana.altoVentana() / 2) - 100, 200, 250, menuSel->retrato->raidenSeleccionado);
+            ventana.texto1(830, (ventana.altoVentana() / 2) + 200, "RAIDEN", 40, "Arial");
+        }
+    }
+}
+
+void ejecutarLogicaFatality(Juego *juego, EstadoJuego *estado, MenuSeleccion *menuSel)
+{
+    if (juego->personaje1 == NULL || juego->personaje2 == NULL)
+    {
+        *estado = ESTADO_MENUSELECCION;
+        return;
+    }
+    Personaje *ganador = (juego->personaje1->fatalityGolpe != NULL) ? juego->personaje1 : juego->personaje2;
+    Personaje *perdedor = (ganador == juego->personaje1) ? juego->personaje2 : juego->personaje1;
+    if (ganador->fatalityGolpe != NULL)
+    {
+        dibujarEscenaFatality(ganador, perdedor);
+
+        static int frames = 0;
+        frames++;
+        if (frames >= 6)
+        {
+            ganador->fatalityGolpe->frameActual++;
+            frames = 0;
+        }
+        if (ganador->fatalityGolpe->frameActual >= ganador->fatalityGolpe->totalFrames)
+        {
+            char nombreGanador[20];
+            if (ganador == juego->personaje1)
+            {
+                if (menuSel->selP1 == SUBZERO)
+                    sprintf(nombreGanador, "Sub-Zero");
+                else if (menuSel->selP1 == LIUKANG)
+                    sprintf(nombreGanador, "Liu Kang");
+            }
+            else
+            {
+                if (menuSel->selP2 == SCORPION)
+                    sprintf(nombreGanador, "Scorpion");
+                else if (menuSel->selP2 == RAIDEN)
+                    sprintf(nombreGanador, "Raiden");
+            }
+
+            juego->p1Listo = false;
+            juego->p2Listo = false;
+            menuSel->duracionTransicion = 50;
+            *estado = ESTADO_MENUSELECCION;
+            registrarVictoria(juego, nombreGanador);
+            ganador->fatalityGolpe->frameActual = 0;
+            juego->personaje1->vida = 100;
+            juego->personaje2->vida = 100;
+            if (*estado == ESTADO_MENUSELECCION)
+            {
+                ventana.reproducirAudio("assets/audio/audioPelea1.wav");
+                liberarPersonajeMemoria(juego->personaje1);
+                liberarPersonajeMemoria(juego->personaje2);
+                juego->personaje1 = NULL;
+                juego->personaje2 = NULL;
+            }
         }
     }
 }
