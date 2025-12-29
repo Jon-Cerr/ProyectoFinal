@@ -26,6 +26,11 @@ typedef struct
     int defensa;
 } Controles;
 
+// struct para almacemar el numero de sprites a crear por cada animacion
+typedef struct {
+     int numSpritesFatality; int numSpritesAbatido; int numSpritesTecnica;
+} SpritesFatality;
+
 // contiene punteros dobles a la struct Imagen de la libreria de graficos para generar imagenes dinamicas en ejecucion del programa para no usar arreglos estaticos
 typedef struct
 {
@@ -175,7 +180,16 @@ void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla, M
  * @param perdedor Puntero a la struct perdedor que arroja los datos del personaje perdedor pasado durante la ejecucion de detectarColision, que retorna el valor del personaje perdedor
  * @param menuSel Puntero a la struct MenuSeleccion para manejar y modificar directamente los campos del menu para realizar ciertas condiciones
  */
-void cargarAnimacionFatality(Personaje *ganador, Personaje *perdedor, MenuSeleccion *menuSel);
+void cargarAnimacionFatality(Personaje *ganador, MenuSeleccion *menuSel);
+
+/**
+ * @brief Funcion que se encarga de cargar los aprites de la animacion del fatality acorde a cada personaje, pues cada uno tiene distintos numero de sprites
+ * 
+ * @param ganador puntero a la struct Personaje para acceder a los campos del ganador y modificarlos adecuadamente
+ * @param nombreGanador tipo de dato que represente el nombre del ganador 
+ * @param sprites Puntero a la struct SpritesFatality que contiene los campos para manejar el numero de sprites por cada animacion
+ */
+void cargarSpritesFatality(Personaje *ganador, const char *nombreGanador, SpritesFatality *sprites);
 
 /**
  * @brief Funcion que se encarga de dibujar la escena del fatality accediendo a los campos de las structs Personaje acorde al ganador y el perdedor

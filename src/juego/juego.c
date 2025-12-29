@@ -162,21 +162,6 @@ Juego *iniciarPelea(CursorSeleccion *cursorPersonaje1, CursorSeleccion *cursorPe
     return juego;
 }
 
-void liberarImagenes(AssetsRetratos *retratosPersonajes)
-{
-    ventana.eliminaImagen(retratosPersonajes->liuKang);
-    ventana.eliminaImagen(retratosPersonajes->scorpion);
-    ventana.eliminaImagen(retratosPersonajes->subZero);
-    ventana.eliminaImagen(retratosPersonajes->raiden);
-    ventana.eliminaImagen(retratosPersonajes->fondoSeleccion);
-    ventana.eliminaImagen(retratosPersonajes->cursorSelector);
-    ventana.eliminaImagen(retratosPersonajes->cursorSelectorP2);
-    ventana.eliminaImagen(retratosPersonajes->liuKangSeleccionado);
-    ventana.eliminaImagen(retratosPersonajes->scorpionSeleccionado);
-    ventana.eliminaImagen(retratosPersonajes->subZeroSeleccionado);
-    ventana.eliminaImagen(retratosPersonajes->raidenSeleccionado);
-}
-
 void menuLoop(MenuSeleccion *menuSel, EstadoJuego *estadoJuego)
 {
     crearMenuSeleccion(menuSel->retrato);
@@ -290,8 +275,7 @@ void ejecutarLogicaFatality(Juego *juego, EstadoJuego *estado, MenuSeleccion *me
     Personaje *perdedor = (ganador == juego->personaje1) ? juego->personaje2 : juego->personaje1;
     if (ganador->fatalityGolpe != NULL)
     {
-        dibujarEscenaFatality(ganador, perdedor);
-
+        dibujarEscenaFatality(ganador, perdedor);   
         static int frames = 0;
         frames++;
         if (frames >= 6)
@@ -335,4 +319,19 @@ void ejecutarLogicaFatality(Juego *juego, EstadoJuego *estado, MenuSeleccion *me
             }
         }
     }
+}
+
+void liberarImagenes(AssetsRetratos *retratosPersonajes)
+{
+    ventana.eliminaImagen(retratosPersonajes->liuKang);
+    ventana.eliminaImagen(retratosPersonajes->scorpion);
+    ventana.eliminaImagen(retratosPersonajes->subZero);
+    ventana.eliminaImagen(retratosPersonajes->raiden);
+    ventana.eliminaImagen(retratosPersonajes->fondoSeleccion);
+    ventana.eliminaImagen(retratosPersonajes->cursorSelector);
+    ventana.eliminaImagen(retratosPersonajes->cursorSelectorP2);
+    ventana.eliminaImagen(retratosPersonajes->liuKangSeleccionado);
+    ventana.eliminaImagen(retratosPersonajes->scorpionSeleccionado);
+    ventana.eliminaImagen(retratosPersonajes->subZeroSeleccionado);
+    ventana.eliminaImagen(retratosPersonajes->raidenSeleccionado);
 }

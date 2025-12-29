@@ -7,7 +7,7 @@ void mostrarMarcadores(EstadoJuego *estadoJuego, Juego *juego)
     {
         ventana.limpiaVentana();
         ventana.muestraImagenEscalada(0, 0, ventana.anchoVentana(), ventana.altoVentana(), juego->fondosJuego->fondoInicio);
-        int posY_inicial = 250;
+        int posYInicial = 250;
         int separacionY = 60;
 
         ventana.color(COLORES.AMARILLO);
@@ -16,9 +16,8 @@ void mostrarMarcadores(EstadoJuego *estadoJuego, Juego *juego)
 
         for (int i = 0; i < 5; i++)
         {
-            ventana.muestraTextoParametroInt(300, posY_inicial + (i * separacionY), "%d.", 30, "Arial", i + 1);
-
-            ventana.texto1(450, posY_inicial + (i * separacionY), juego->nuevoRegistro[i].nombreGanador, 30, "Arial");
+            ventana.muestraTextoParametroInt(300, posYInicial + (i * separacionY), "%d.", 30, "Arial", i + 1);
+            ventana.texto1(450, posYInicial + (i * separacionY), juego->nuevoRegistro[i].nombreGanador, 30, "Arial");
         }
         if (ventana.teclaPresionada() == TECLAS.LETRA_V)
             *estadoJuego = ESTADO_MENUSELECCION;
@@ -73,7 +72,7 @@ void cargarPodio(Juego *juego)
         }
         else
         {
-            printf("No se pudo guardar el marcador.\n");
+            printf("No se pudo guardar el podio.\n");
             exit(1);
         }
     }

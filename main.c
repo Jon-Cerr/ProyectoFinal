@@ -32,7 +32,6 @@ int main()
     juego->teclaSoltada = teclaSoltada;
     juego->p1Listo = false;
     juego->p2Listo = false;
-    iniciarJuego(juego, &estadoJuego);
     MenuSeleccion *menuSel = (MenuSeleccion *)malloc(sizeof(MenuSeleccion));
     menuSel->retrato = crearRetratos();
     menuSel->cursorP1 = (CursorSeleccion *)malloc(sizeof(CursorSeleccion));
@@ -41,6 +40,7 @@ int main()
     menuSel->selP2 = SCORPION;
     menuSel->datosJuego = juego;
     menuSel->duracionTransicion = 50;
+    iniciarJuego(juego, &estadoJuego);
     cargarPodio(juego);
     while (tecla != TECLAS.ESCAPE)
     {

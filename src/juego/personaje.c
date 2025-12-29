@@ -78,156 +78,131 @@ void cargarSprites(Personaje *personaje, const char *nombrePersonaje)
 {
     int indiceActual = 0;
     // Se llenan los arreglos de animaciones correspondientes y los sprites del personaje
-    for (int i = 0; i < 4; i++)
+    for (int indiceQuieto = 0; indiceQuieto < 4; indiceQuieto++)
     {
         char nombreArchivo[100];
-        sprintf(nombreArchivo, "./sprites/quieto/%s_quieto_%d.bmp", nombrePersonaje, (i + 1));
+        sprintf(nombreArchivo, "./sprites/quieto/%s_quieto_%d.bmp", nombrePersonaje, (indiceQuieto + 1));
         char nombreArchivoMask[100];
-        sprintf(nombreArchivoMask, "./sprites/quieto/%s_quieto_%d_mask.bmp", nombrePersonaje, (i + 1));
+        sprintf(nombreArchivoMask, "./sprites/quieto/%s_quieto_%d_mask.bmp", nombrePersonaje, (indiceQuieto + 1));
         personaje->sprites[indiceActual] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
         if (personaje->sprites[indiceActual] == NULL)
         {
-            printf("ERROR: No se encontró el archivo: %s\n", nombreArchivo);
+            ventana.muestraMensaje("No se pudieron cargar los sprites.");
+            printf("ERROR: No se encontro el archivo: %s\n", nombreArchivo);
         }
-        else
-        {
-            printf("Cargado con éxito: %s\n", nombreArchivo);
-        }
-        personaje->animQuieto[i] = personaje->sprites[indiceActual];
+        personaje->animQuieto[indiceQuieto] = personaje->sprites[indiceActual];
         indiceActual++;
     }
 
-    for (int j = 0; j < 6; j++)
+    for (int indiceCaminata = 0; indiceCaminata < 6; indiceCaminata++)
     {
         char nombreArchivo[100];
-        sprintf(nombreArchivo, "./sprites/camina/%s_camina_%d.bmp", nombrePersonaje, (j + 1));
+        sprintf(nombreArchivo, "./sprites/camina/%s_camina_%d.bmp", nombrePersonaje, (indiceCaminata + 1));
         char nombreArchivoMask[100];
-        sprintf(nombreArchivoMask, "./sprites/camina/%s_camina_%d_mask.bmp", nombrePersonaje, (j + 1));
+        sprintf(nombreArchivoMask, "./sprites/camina/%s_camina_%d_mask.bmp", nombrePersonaje, (indiceCaminata + 1));
         personaje->sprites[indiceActual] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
         if (personaje->sprites[indiceActual] == NULL)
         {
-            printf("ERROR: No se encontró el archivo: %s\n", nombreArchivo);
+            ventana.muestraMensaje("No se pudieron cargar los sprites.");
+            printf("ERROR: No se encontro el archivo: %s\n", nombreArchivo);
         }
-        else
-        {
-            printf("Cargado con éxito: %s\n", nombreArchivo);
-        }
-        personaje->animCaminata[j] = personaje->sprites[indiceActual];
+        personaje->animCaminata[indiceCaminata] = personaje->sprites[indiceActual];
         indiceActual++;
     }
 
-    for (int k = 0; k < 3; k++)
+    for (int indiceGolpe = 0; indiceGolpe < 3; indiceGolpe++)
     {
         char nombreArchivo[100];
-        sprintf(nombreArchivo, "./sprites/golpe/%s_golpe_%d.bmp", nombrePersonaje, (k + 1));
+        sprintf(nombreArchivo, "./sprites/golpe/%s_golpe_%d.bmp", nombrePersonaje, (indiceGolpe + 1));
         char nombreArchivoMask[100];
-        sprintf(nombreArchivoMask, "./sprites/golpe/%s_golpe_%d_mask.bmp", nombrePersonaje, (k + 1));
+        sprintf(nombreArchivoMask, "./sprites/golpe/%s_golpe_%d_mask.bmp", nombrePersonaje, (indiceGolpe + 1));
         personaje->sprites[indiceActual] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
         if (personaje->sprites[indiceActual] == NULL)
         {
-            printf("ERROR: No se encontró el archivo: %s\n", nombreArchivo);
+            ventana.muestraMensaje("No se pudieron cargar los sprites.");
+            printf("ERROR: No se encontro el archivo: %s\n", nombreArchivo);
         }
-        else
-        {
-            printf("Cargado con éxito: %s\n", nombreArchivo);
-        }
-        personaje->animGolpe[k] = personaje->sprites[indiceActual];
+        personaje->animGolpe[indiceGolpe] = personaje->sprites[indiceActual];
         indiceActual++;
     }
 
-    for (int l = 0; l < 3; l++)
+    for (int indiceGolpe2 = 0; indiceGolpe2 < 3; indiceGolpe2++)
     {
         char nombreArchivo[100];
-        sprintf(nombreArchivo, "./sprites/golpe/golpe2/%s_golpe_%d.bmp", nombrePersonaje, (l + 1));
+        sprintf(nombreArchivo, "./sprites/golpe/golpe2/%s_golpe_%d.bmp", nombrePersonaje, (indiceGolpe2 + 1));
         char nombreArchivoMask[100];
-        sprintf(nombreArchivoMask, "./sprites/golpe/golpe2/%s_golpe_%d_mask.bmp", nombrePersonaje, (l + 1));
+        sprintf(nombreArchivoMask, "./sprites/golpe/golpe2/%s_golpe_%d_mask.bmp", nombrePersonaje, (indiceGolpe2 + 1));
         personaje->sprites[indiceActual] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
         if (personaje->sprites[indiceActual] == NULL)
         {
-            printf("ERROR: No se encontró el archivo: %s\n", nombreArchivo);
+            ventana.muestraMensaje("No se pudieron cargar los sprites.");
+            printf("ERROR: No se encontro el archivo: %s\n", nombreArchivo);
         }
-        else
-        {
-            printf("Cargado con éxito: %s\n", nombreArchivo);
-        }
-        personaje->animGolpe2[l] = personaje->sprites[indiceActual];
+        personaje->animGolpe2[indiceGolpe2] = personaje->sprites[indiceActual];
         indiceActual++;
     }
 
-    for (int m = 0; m < 4; m++)
+    for (int indicePatada = 0; indicePatada < 4; indicePatada++)
     {
         char nombreArchivo[100];
-        sprintf(nombreArchivo, "./sprites/golpe/patada/%s_patada_%d.bmp", nombrePersonaje, (m + 1));
+        sprintf(nombreArchivo, "./sprites/golpe/patada/%s_patada_%d.bmp", nombrePersonaje, (indicePatada + 1));
         char nombreArchivoMask[100];
-        sprintf(nombreArchivoMask, "./sprites/golpe/patada/%s_patada_%d_mask.bmp", nombrePersonaje, (m + 1));
+        sprintf(nombreArchivoMask, "./sprites/golpe/patada/%s_patada_%d_mask.bmp", nombrePersonaje, (indicePatada + 1));
         personaje->sprites[indiceActual] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
         if (personaje->sprites[indiceActual] == NULL)
         {
-            printf("ERROR: No se encontró el archivo: %s\n", nombreArchivo);
+            ventana.muestraMensaje("No se pudieron cargar los sprites.");
+            printf("ERROR: No se encontro el archivo: %s\n", nombreArchivo);
         }
-        else
-        {
-            printf("Cargado con éxito: %s\n", nombreArchivo);
-        }
-        personaje->animPatada[m] = personaje->sprites[indiceActual];
+        personaje->animPatada[indicePatada] = personaje->sprites[indiceActual];
         indiceActual++;
     }
 
-    for (int n = 0; n < 3; n++)
+    for (int indiceGolpeado = 0; indiceGolpeado < 3; indiceGolpeado++)
     {
         char nombreArchivo[100];
-        sprintf(nombreArchivo, "./sprites/golpeado/%s_golpeado_%d.bmp", nombrePersonaje, (n + 1));
+        sprintf(nombreArchivo, "./sprites/golpeado/%s_golpeado_%d.bmp", nombrePersonaje, (indiceGolpeado + 1));
         char nombreArchivoMask[100];
-        sprintf(nombreArchivoMask, "./sprites/golpeado/%s_golpeado_%d_mask.bmp", nombrePersonaje, (n + 1));
+        sprintf(nombreArchivoMask, "./sprites/golpeado/%s_golpeado_%d_mask.bmp", nombrePersonaje, (indiceGolpeado + 1));
         personaje->sprites[indiceActual] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
         if (personaje->sprites[indiceActual] == NULL)
         {
-            printf("ERROR: No se encontró el archivo: %s\n", nombreArchivo);
+            ventana.muestraMensaje("No se pudieron cargar los sprites.");
+            printf("ERROR: No se encontro el archivo: %s\n", nombreArchivo);
         }
-        else
-        {
-            printf("Cargado con éxito: %s\n", nombreArchivo);
-        }
-        personaje->animGolpeado[n] = personaje->sprites[indiceActual];
+        personaje->animGolpeado[indiceGolpeado] = personaje->sprites[indiceActual];
         indiceActual++;
     }
 
-    for (int o = 0; o < 3; o++)
+    for (int indiceDefensa = 0; indiceDefensa < 3; indiceDefensa++)
     {
         char nombreArchivo[100];
-        sprintf(nombreArchivo, "./sprites/golpeado/%s_defensa_%d.bmp", nombrePersonaje, (o + 1));
+        sprintf(nombreArchivo, "./sprites/golpeado/%s_defensa_%d.bmp", nombrePersonaje, (indiceDefensa + 1));
         char nombreArchivoMask[100];
-        sprintf(nombreArchivoMask, "./sprites/golpeado/%s_defensa_%d_mask.bmp", nombrePersonaje, (o + 1));
+        sprintf(nombreArchivoMask, "./sprites/golpeado/%s_defensa_%d_mask.bmp", nombrePersonaje, (indiceDefensa + 1));
         personaje->sprites[indiceActual] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
         if (personaje->sprites[indiceActual] == NULL)
         {
-            printf("ERROR: No se encontró el archivo: %s\n", nombreArchivo);
+            ventana.muestraMensaje("No se pudieron cargar los sprites.");
+            printf("ERROR: No se encontro el archivo: %s\n", nombreArchivo);
         }
-        else
-        {
-            printf("Cargado con éxito: %s\n", nombreArchivo);
-        }
-        personaje->animDefensa[o] = personaje->sprites[indiceActual];
+        personaje->animDefensa[indiceDefensa] = personaje->sprites[indiceActual];
         indiceActual++;
     }
 
-    for (int p = 0; p < 7; p++)
+    for (int indiceAbatido = 0; indiceAbatido < 7; indiceAbatido++)
     {
         char nombreArchivo[100];
-        sprintf(nombreArchivo, "./sprites/abatido/%s_abatido_%d.bmp", nombrePersonaje, (p + 1));
+        sprintf(nombreArchivo, "./sprites/abatido/%s_abatido_%d.bmp", nombrePersonaje, (indiceAbatido + 1));
         char nombreArchivoMask[100];
-        sprintf(nombreArchivoMask, "./sprites/abatido/%s_abatido_%d_mask.bmp", nombrePersonaje, (p + 1));
+        sprintf(nombreArchivoMask, "./sprites/abatido/%s_abatido_%d_mask.bmp", nombrePersonaje, (indiceAbatido + 1));
         personaje->sprites[indiceActual] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
         if (personaje->sprites[indiceActual] == NULL)
         {
             ventana.muestraMensaje("No se pudieron cargar los sprites.");
             printf("ERROR: No se encontró el archivo: %s\n", nombreArchivo);
         }
-        else
-        {
-            printf("Cargado con éxito: %s\n", nombreArchivo);
-        }
-        personaje->animAbatido[p] = personaje->sprites[indiceActual];
+        personaje->animAbatido[indiceAbatido] = personaje->sprites[indiceActual];
         indiceActual++;
     }
 }
@@ -475,7 +450,7 @@ void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla, M
     // distancia absoluta entre personaje1 y personaje2
     int distancia = abs(personaje1->x - personaje2->x);
     int minColision = 100; // colision minima para detectar el golpe
-    //comparar distancias para hacer efectiva la colision
+    // comparar distancias para hacer efectiva la colision
     if (distancia < minColision)
     {
         // verificcar que el personaje se encuentre en los siguientes estados para hacer valida la colision
@@ -486,7 +461,9 @@ void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla, M
             {
                 if (!(personaje2->defendiendo))
                 {
-                    personaje2->vida -= 10;
+                    // Si la colision es efectiva, se resta vida al personaje
+                    personaje2->vida -= 1;
+                    // si la vida del personaje es menor o igual a 0, el estado del personaje sera ABATIDO, la vida es de cero y se reinician los frames para la animacion de abatido, y suena el famoso "finish him"
                     if (personaje2->vida <= 0)
                     {
                         personaje2->vida = 0;
@@ -494,6 +471,7 @@ void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla, M
                         personaje2->frameActual = 0;
                         ventana.reproducirAudio("./assets/audio/finish.wav");
                     }
+                    // si no se cumple lo anetrior (el personaje aun tiene vida) su estado sera de GOLPEADO para animar este estado
                     else
                     {
                         personaje2->estado = GOLPEADO;
@@ -508,7 +486,7 @@ void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla, M
             {
                 if (!(personaje1->defendiendo))
                 {
-                    personaje1->vida -= 10;
+                    personaje1->vida -= 1;
                     if (personaje1->vida <= 0)
                     {
                         personaje1->vida = 0;
@@ -527,61 +505,129 @@ void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla, M
         }
     }
 
-    //logica para el personaje 1 para activar el fatality
+    // logica para el personaje 1 para activar el fatality
     if (personaje2->estado == ABATIDO && distancia < 150)
     {
         if (tecla == TECLAS.LETRA_Q)
         {
-            cargarAnimacionFatality(personaje1, personaje2, menuSel);
+            cargarAnimacionFatality(personaje1, menuSel);
             *estado = ESTADO_FATALITY;
         }
     }
-    //logica para el personaje 2 para activar el fatality
+    // logica para el personaje 2 para activar el fatality
     if (personaje1->estado == ABATIDO && distancia < 150)
     {
         if (tecla == TECLAS.LETRA_U)
         {
-            cargarAnimacionFatality(personaje2, personaje1, menuSel);
+            cargarAnimacionFatality(personaje2, menuSel);
             *estado = ESTADO_FATALITY;
         }
     }
 }
 
-void cargarAnimacionFatality(Personaje *ganador, Personaje *perdedor, MenuSeleccion *menuSel)
+void cargarSpritesFatality(Personaje *ganador, const char *nombreGanador, SpritesFatality *sprites)
 {
+    // para int numSpritesFatality
+    for (int i = 0; i < sprites->numSpritesFatality; i++)
+    {
+        char nombreArchivo[100];
+        char nombreArchivoMask[100];
+        sprintf(nombreArchivo, "./sprites/fatalitys/%s/%s_fatality_%d.bmp", nombreGanador, nombreGanador, (i + 1));
+        sprintf(nombreArchivoMask, "./sprites/fatalitys/%s/%s_fatality_%d_mask.bmp", nombreGanador, nombreGanador, (i + 1));
+        ganador->fatalityGolpe->personajeFatality[i] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
+        if (ganador->fatalityGolpe->personajeFatality[i] == NULL)
+        {
+            printf("Aviso: No se encontro el frame %d para el fatality de %s\n", i + 1, nombreGanador);
+        }
+    }
+    // para int numSpritesAbatido
+    for (int i = 0; i < sprites->numSpritesAbatido; i++)
+    {
+        char nombreArchivo[100];
+        char nombreArchivoMask[100];
+
+        sprintf(nombreArchivo, "./sprites/fatalitys/%s/%s_fatality_golpe_%d.bmp", nombreGanador, nombreGanador, (i + 1));
+        sprintf(nombreArchivoMask, "./sprites/fatalitys/%s/%s_fatality_golpe_%d_mask.bmp", nombreGanador, nombreGanador, (i + 1));
+        ganador->fatalityGolpe->personajeAbatido[i] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
+
+        if (ganador->fatalityGolpe->personajeAbatido[i] == NULL)
+        {
+            printf("Aviso: No se encontro el frame %d para el fatality de %s\n", i + 1, nombreGanador);
+        }
+    }
+    // para  int numSpritesTecnica
+    for (int i = 0; i < sprites->numSpritesTecnica; i++)
+    {
+        char nombreArchivo[100];
+        char nombreArchivoMask[100];
+        sprintf(nombreArchivo, "./sprites/fatalitys/%s/%s_fatality_tecnica_%d.bmp", nombreGanador, nombreGanador, (i + 1));
+        sprintf(nombreArchivoMask, "./sprites/fatalitys/%s/%s_fatality_tecnica_%d_mask.bmp", nombreGanador, nombreGanador, (i + 1));
+        ganador->fatalityGolpe->dibujoTecnica[i] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
+        if (ganador->fatalityGolpe->dibujoTecnica[i] == NULL)
+        {
+            printf("Aviso: No se encontro el frame %d para el fatality de %s\n", i + 1, nombreGanador);
+        }
+    }
+}
+
+void cargarAnimacionFatality(Personaje *ganador, MenuSeleccion *menuSel)
+{
+    // Instanciar una nueva variable de tipo SpritesFatality de forma local para almacenar los campos correspondientes
+    SpritesFatality newSprites;
     // buffer para el nombre del ganador
     char nombreGanador[20];
-    // se crea la memoria para las animacones del fatality
+    // se crea la memoria para las animaciones del fatality
     ganador->fatalityGolpe = (Fatality *)malloc(sizeof(Fatality));
+    // Se inicializa el frameActual a 0 para iniciar la animacion
     ganador->fatalityGolpe->frameActual = 0;
-    //condiciones para saber de que personaje se cargaran los frames y acoerde a eso establecer el numero de frames
-    if (menuSel->selP1 == LIUKANG)
+    // condiciones para saber de que personaje se cargaran los frames y acorde a eso establecer el numero de frames
+    // Para el personaje 1
+    if (ganador == menuSel->datosJuego->personaje1)
     {
-        ganador->fatalityGolpe->totalFrames = 16;
-        sprintf(nombreGanador, "liu");
+        if (menuSel->selP1 == LIUKANG)
+        {
+            ganador->fatalityGolpe->totalFrames = 18;
+            sprintf(nombreGanador, "liu");
+            newSprites.numSpritesAbatido = 8;
+            newSprites.numSpritesFatality = 6;
+            newSprites.numSpritesTecnica = 11;
+        }
+        else if (menuSel->selP1 == SUBZERO)
+        {
+            ganador->fatalityGolpe->totalFrames = 15;
+            sprintf(nombreGanador, "sub");
+            newSprites.numSpritesAbatido = 10;
+            newSprites.numSpritesFatality = 5;
+            newSprites.numSpritesTecnica = 4;
+        }
     }
-    else if (menuSel->selP1 == SUBZERO)
+    // para el personaje 2
+    else
     {
-        ganador->fatalityGolpe->totalFrames = 16;
-        sprintf(nombreGanador, "sub");
-    }
-    if (menuSel->selP2 == SCORPION)
-    {
-        ganador->fatalityGolpe->totalFrames = 8;
-        sprintf(nombreGanador, "scor");
-    }
-    else if (menuSel->selP2 == RAIDEN)
-    {
-        ganador->fatalityGolpe->totalFrames = 16;
-        sprintf(nombreGanador, "raiden");
+        if (menuSel->selP2 == SCORPION)
+        {
+            ganador->fatalityGolpe->totalFrames = 18;
+            sprintf(nombreGanador, "scor");
+            newSprites.numSpritesAbatido = 8;
+            newSprites.numSpritesFatality = 8;
+            newSprites.numSpritesTecnica = 8;
+        }
+        else if (menuSel->selP2 == RAIDEN)
+        {
+            ganador->fatalityGolpe->totalFrames = 18;
+            sprintf(nombreGanador, "raiden");
+            newSprites.numSpritesAbatido = 15;
+            newSprites.numSpritesFatality = 10;
+            newSprites.numSpritesTecnica = 7;
+        }
     }
 
-    // reservar memoria para las imagenes acorde a los frames establecidos, Imagen** es de doble puntero pues son imagenes dinamicas
+    // Reservar memoria para las imagenes acorde a los frames establecidos, Imagen** es de doble puntero pues son imagenes dinamicas
     ganador->fatalityGolpe->personajeFatality = (Imagen **)malloc(sizeof(Imagen *) * ganador->fatalityGolpe->totalFrames);
     ganador->fatalityGolpe->personajeAbatido = (Imagen **)malloc(sizeof(Imagen *) * ganador->fatalityGolpe->totalFrames);
     ganador->fatalityGolpe->dibujoTecnica = (Imagen **)malloc(sizeof(Imagen *) * ganador->fatalityGolpe->totalFrames);
 
-    // inciializar la memoria en NULL para evitar crasheos
+    // Inciializar la memoria en NULL para evitar crasheos
     for (int z = 0; z < ganador->fatalityGolpe->totalFrames; z++)
     {
         ganador->fatalityGolpe->personajeFatality[z] = NULL;
@@ -589,25 +635,8 @@ void cargarAnimacionFatality(Personaje *ganador, Personaje *perdedor, MenuSelecc
         ganador->fatalityGolpe->dibujoTecnica[z] = NULL;
     }
 
-    // llenar o buscar los archivos bmp acorde al nombre del personaje/ganador y el nmumero de frames
-    for (int i = 0; i < ganador->fatalityGolpe->totalFrames; i++)
-    {
-        char nombreArchivo[100];
-        char nombreArchivoMask[100];
-        sprintf(nombreArchivo, "./sprites/fatalitys/%s/%s_fatality_%d.bmp", nombreGanador, nombreGanador, (i + 1));
-        sprintf(nombreArchivoMask, "./sprites/fatalitys/%s/%s_fatality_%d_mask.bmp", nombreGanador, nombreGanador, (i + 1));
-        ganador->fatalityGolpe->personajeFatality[i] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
-        sprintf(nombreArchivo, "./sprites/fatalitys/%s/%s_fatality_golpe_%d.bmp", nombreGanador, nombreGanador, (i + 1));
-        sprintf(nombreArchivoMask, "./sprites/fatalitys/%s/%s_fatality_golpe_%d_mask.bmp", nombreGanador, nombreGanador, (i + 1));
-        ganador->fatalityGolpe->personajeAbatido[i] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
-        sprintf(nombreArchivo, "./sprites/fatalitys/%s/%s_fatality_tecnica_%d.bmp", nombreGanador, nombreGanador, (i + 1));
-        sprintf(nombreArchivoMask, "./sprites/fatalitys/%s/%s_fatality_tecnica_%d_mask.bmp", nombreGanador, nombreGanador, (i + 1));
-        ganador->fatalityGolpe->dibujoTecnica[i] = ventana.creaImagenConMascara(nombreArchivo, nombreArchivoMask);
-        if (ganador->fatalityGolpe->personajeFatality[i] == NULL)
-        {
-            printf("Aviso: No se encontro el frame %d para el fatality de %s\n", i + 1, nombreGanador);
-        }
-    }
+    // Llenar o buscar los archivos bmp acorde al nombre del personaje/ganador y el nmumero de frames
+    cargarSpritesFatality(ganador, nombreGanador, &newSprites);
 }
 
 void dibujarEscenaFatality(Personaje *ganador, Personaje *perdedor)
@@ -617,7 +646,7 @@ void dibujarEscenaFatality(Personaje *ganador, Personaje *perdedor)
     {
         return;
     }
-    //inicializamos el frame al frame actual de la animacion del ganador
+    // Inicializamos el frame al frame actual de la animacion del ganador
     int frame = ganador->fatalityGolpe->frameActual;
     if (frame < ganador->fatalityGolpe->totalFrames)
     {

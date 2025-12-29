@@ -14,7 +14,7 @@ SIMPLECONTROLLER_OBJ = simplecontroller.o
 SERIAL_SRC = .\src\esp32\serial.c
 SERIAL_OBJ = serial.o
 PODIO_SRC = .\src\juego\podio_marcadores.c
-PODIO_OBJ = PODIO.o
+PODIO_OBJ = podio.o
 WINMM_LIB=-lwinmm
 
 run: $(APP)

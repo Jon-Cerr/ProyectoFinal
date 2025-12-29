@@ -85,6 +85,8 @@ void dibujarEscenario(Fondos *fondos);
  * @brief Funcion que se encarga del dibujado del personaje
  *
  * @param juego Puntero a la struct juego que contiene los campos del mismo asi como punteros a otras structs
+ * @param menuSel puntero a la struct MenuSeleccion para poder trabajar y modificar sus campos acorde a ciertos comportamientos/condiciones
+ * @param estado puntero a la enum EstadoJuego para trabajar con los estados adopotados por el juego a lo largo de la ejecución del mismo
  */
 void animacionPersonaje(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado);
 
@@ -107,6 +109,8 @@ void iniciarJuego(Juego *juego, EstadoJuego *estadoJuego);
  * @brief Funcion encargada ed iniciar el loop del juego, llamda desde el main
  *
  * @param juego Puntero a la struct Juego que contiene los campos de Personaje, Fondos entre otras mas
+ * @param menuSel es un puntero a la struct MenuSeleccion que contiene punteros a otras structs para manejar el flujo de juego
+ * @param estado puntero a la enum EstadoJuego para trabajar con los estados adopotados por el juego a lo largo de la ejecución del mismo
  */
 void gameLoop(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado);
 
@@ -154,13 +158,6 @@ void dibujarCursor(CursorSeleccion *cursorPersonaje, AssetsRetratos *retratos, P
 Juego *iniciarPelea(CursorSeleccion *cursorPersonaje1, CursorSeleccion *cursorPersonaje2, Juego *juego, int tecla);
 
 /**
- * @brief Funcion que se encarga de liberara de la memoria las imagenes creadas
- * 
- * @param retratosPersonajes Puntero a la struct AssetsRetratos
- */
-void liberarImagenes(AssetsRetratos *retratosPersonajes);
-
-/**
  * @brief Funcion que se encarga de ejecutar el loop del menu mientras el estadop sea ESTADO_MENUSELECCION
  * 
  * @param menuSel Puntero a la struct completa de MenuSeleccion
@@ -171,7 +168,7 @@ void menuLoop(MenuSeleccion *menuSel, EstadoJuego *estadoJuego);
 /**
  * @brief Funcion que se encarga de inciar un timer para pasar el estado de juego ESTADO_JUGANDO
  * 
- * @param menuSel 
+ * @param menuSel es un puntero a la struct MenuSeleccion para acceder al identificador del personaje elegido por ambos jugadores
  */
 void animacionInicioPelea(MenuSeleccion *menuSel);
 
@@ -183,4 +180,11 @@ void animacionInicioPelea(MenuSeleccion *menuSel);
  * @param menuSel Puntero a la struct MenuSeleccion para acceder a los campos correspondiente y poder modificarlos para cambiar el comportamiento del cilo
  */
 void ejecutarLogicaFatality(Juego *juego, EstadoJuego *estado,  MenuSeleccion *menuSel);
+
+/**
+ * @brief Funcion que se encarga de liberar de la memoria las imagenes creadas
+ * 
+ * @param retratosPersonajes Puntero a la struct AssetsRetratos
+ */
+void liberarImagenes(AssetsRetratos *retratosPersonajes);
 #endif
