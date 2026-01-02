@@ -2,6 +2,13 @@
 #define PERSONAJE_H_
 
 #include "../graficos/graficos.h"
+#include "../esp32/simplecontroller.h"
+#define DERECHA 22
+#define IZQUIERDA 23
+#define DEFENSA_ESP32 21
+#define GOLPE1 19
+#define GOLPE2 18
+#define PATADA 15
 struct MenuSeleccion;
 typedef struct MenuSeleccion MenuSeleccion;
 
@@ -26,10 +33,16 @@ typedef struct
     int defensa;
 } Controles;
 
-// struct para almacemar el numero de sprites a crear por cada animacion
-typedef struct {
-     int numSpritesFatality; int numSpritesAbatido; int numSpritesTecnica;
-} SpritesFatality;
+// Controles para el ESP32, mapeados como variables booleanas
+typedef struct
+{
+    bool derechaEsp32;
+    bool izquierdaEsp32;
+    bool golpeEsp32;
+    bool golpe2Esp32;
+    bool patadaEsp32;
+    bool defensaEsp32;
+} ControlesEsp32;
 
 // contiene punteros dobles a la struct Imagen de la libreria de graficos para generar imagenes dinamicas en ejecucion del programa para no usar arreglos estaticos
 typedef struct
@@ -39,6 +52,11 @@ typedef struct
     Imagen **dibujoTecnica;
     int totalFrames;
     int frameActual;
+    int numSpritesFatality;
+    int numSpritesAbatido;
+    int numSpritesTecnica;
+    int coorXFatality;
+    int coorYFatality;
 } Fatality;
 
 // contiene todos los campos necesarios para la logica del personaje, asi como arreglos dinamicos (punteros dobles) para generar los sprites correspondientes
@@ -62,6 +80,7 @@ typedef struct
     Imagen *animDefensa[3];
     Imagen *animAbatido[7];
     Controles controls;
+    ControlesEsp32 controlsEsp32;
     Fatality *fatalityGolpe;
 } Personaje;
 
@@ -129,6 +148,15 @@ void dibujarPersonaje(Personaje *personaje);
 void cambiarEstado(Personaje *personaje, int tecla, int teclaSoltada);
 
 /**
+ * @brief Funcion que mapea las entradas del control esp32 para asignar los valores a las teclas presionadas de cada movimiento
+ * 
+ * @param esp32 Contiene la informacion especifica para la conexion seril
+ * @param controlEsp Es un puntero a la struct ControlesEsp32 que contiene los mismos para ser mapeados
+ * @return ControlesEsp32* 
+ */
+ControlesEsp32 *mapearControlesEsp32(Board *esp32, ControlesEsp32 *controlEsp);
+
+/**
  * @brief Funcion que delimita hasta donde se puede mover el personaje y que cambia sus estados y los frames a mostrar
  *
  * @param personaje Puntero a la struct Personaje para acceder y modificar todos sus campos
@@ -189,7 +217,7 @@ void cargarAnimacionFatality(Personaje *ganador, MenuSeleccion *menuSel);
  * @param nombreGanador tipo de dato que represente el nombre del ganador 
  * @param sprites Puntero a la struct SpritesFatality que contiene los campos para manejar el numero de sprites por cada animacion
  */
-void cargarSpritesFatality(Personaje *ganador, const char *nombreGanador, SpritesFatality *sprites);
+void cargarSpritesFatality(Personaje *ganador, const char *nombreGanador);
 
 /**
  * @brief Funcion que se encarga de dibujar la escena del fatality accediendo a los campos de las structs Personaje acorde al ganador y el perdedor

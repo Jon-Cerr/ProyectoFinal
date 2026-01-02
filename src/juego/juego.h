@@ -88,7 +88,7 @@ void dibujarEscenario(Fondos *fondos);
  * @param menuSel puntero a la struct MenuSeleccion para poder trabajar y modificar sus campos acorde a ciertos comportamientos/condiciones
  * @param estado puntero a la enum EstadoJuego para trabajar con los estados adopotados por el juego a lo largo de la ejecución del mismo
  */
-void animacionPersonaje(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado);
+void animacionPersonaje(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado, Board *esp32);
 
 /**
  * @brief Funcion que crea la imagen del escenario
@@ -112,7 +112,7 @@ void iniciarJuego(Juego *juego, EstadoJuego *estadoJuego);
  * @param menuSel es un puntero a la struct MenuSeleccion que contiene punteros a otras structs para manejar el flujo de juego
  * @param estado puntero a la enum EstadoJuego para trabajar con los estados adopotados por el juego a lo largo de la ejecución del mismo
  */
-void gameLoop(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado);
+void gameLoop(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado, Board *esp32);
 
 /**
  * @brief Funcion que instancia, inicialioza y crea los retratos de cada jugador asi como los cursores de seleccion

@@ -5,12 +5,12 @@
 #include "./src/juego/juego.h"
 #include "./src/esp32/simplecontroller.h"
 #include "./src/juego/podio_marcadores.h"
-#define DERECHA 15
-#define IZQUIERDA 18
-#define DEFENSA 19
-#define GOLPE1 22
-#define GOLPE2 23
-#define PATADA 21
+#define DERECHA 22
+#define IZQUIERDA 23
+#define DEFENSA_ESP32 21
+#define GOLPE1 19
+#define GOLPE2 18
+#define PATADA 15
 
 int main()
 {
@@ -19,6 +19,22 @@ int main()
     ventana.cambiarIconoVentana();
     int tecla = ventana.teclaPresionada();
     int teclaSoltada = ventana.teclaSoltada();
+    Board *esp32 = connectDevice("COM3", B115200);
+
+    if (esp32 != NULL)
+    {
+        esp32->pinMode(esp32, DERECHA, INPUT_PULLUP);
+        esp32->pinMode(esp32, IZQUIERDA, INPUT_PULLUP);
+        esp32->pinMode(esp32, DEFENSA_ESP32, INPUT_PULLUP);
+        esp32->pinMode(esp32, GOLPE1, INPUT_PULLUP);
+        esp32->pinMode(esp32, GOLPE2, INPUT_PULLUP);
+        esp32->pinMode(esp32, PATADA, INPUT_PULLUP);
+        ventana.espera(10);
+    }
+    else
+    {
+        ventana.muestraMensaje("Error al conectar con el ESP32. Verifique si el control esta conectado.");
+    }
     Personaje *jugador1 = NULL;
     Personaje *jugador2 = NULL;
     EstadoPersonaje estado = QUIETO;
@@ -56,7 +72,7 @@ int main()
 
         else if (estadoJuego == ESTADO_JUGANDO)
         {
-            gameLoop(juego, menuSel, &estadoJuego);
+            gameLoop(juego, menuSel, &estadoJuego, esp32);
         }
         else if (estadoJuego == ESTADO_FATALITY)
         {

@@ -55,12 +55,13 @@ Personaje *cargarPersonaje2(Personaje *personaje, EstadoPersonaje estado, const 
     personaje->totalFrames = 4;
     personaje->moviendoDerecha = false;
     personaje->moviendoIzquierda = false;
-    personaje->controls.derecha = TECLAS.LETRA_L;
-    personaje->controls.izquierda = TECLAS.LETRA_J;
-    personaje->controls.golpe = TECLAS.LETRA_U;
-    personaje->controls.golpe2 = TECLAS.LETRA_O;
-    personaje->controls.patada = TECLAS.LETRA_I;
-    personaje->controls.defensa = TECLAS.LETRA_M;
+    personaje->controls.derecha = TECLAS.LETRA_D;
+    personaje->controls.izquierda = TECLAS.LETRA_A;
+    personaje->controls.golpe = TECLAS.LETRA_Q;
+    personaje->controls.golpe2 = TECLAS.LETRA_E;
+    personaje->controls.patada = TECLAS.LETRA_W;
+    personaje->controls.defensa = TECLAS.LETRA_Z;
+    personaje->controlsEsp32.defensaEsp32 = false;
     personaje->defendiendo = false;
     personaje->fatalityGolpe = NULL;
     personaje->sprites = (Imagen **)malloc(sizeof(Imagen *) * 70);
@@ -205,6 +206,29 @@ void cargarSprites(Personaje *personaje, const char *nombrePersonaje)
         personaje->animAbatido[indiceAbatido] = personaje->sprites[indiceActual];
         indiceActual++;
     }
+}
+
+ControlesEsp32 *mapearControlesEsp32(Board *esp32, ControlesEsp32 *controlEsp)
+{
+    if (esp32 != NULL)
+    {
+        int lecturaDefensa = esp32->digitalRead(esp32, DEFENSA_ESP32);
+        if (lecturaDefensa != 0 && lecturaDefensa != 1)
+        {
+            controlEsp->defensaEsp32 = false;
+        }
+        else
+        {
+            controlEsp->defensaEsp32 = (lecturaDefensa == 0);
+        }
+        controlEsp->derechaEsp32 = (esp32->digitalRead(esp32, DERECHA) == 0);
+        controlEsp->izquierdaEsp32 = (esp32->digitalRead(esp32, IZQUIERDA) == 0);
+        controlEsp->defensaEsp32 = (esp32->digitalRead(esp32, DEFENSA_ESP32) == 0);
+        controlEsp->golpeEsp32 = (esp32->digitalRead(esp32, GOLPE1) == 0);
+        controlEsp->golpe2Esp32 = (esp32->digitalRead(esp32, GOLPE2) == 0);
+        controlEsp->patadaEsp32 = (esp32->digitalRead(esp32, PATADA) == 0);
+    }
+    return controlEsp;
 }
 
 void dibujarPersonaje(Personaje *personaje)
@@ -525,10 +549,10 @@ void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla, M
     }
 }
 
-void cargarSpritesFatality(Personaje *ganador, const char *nombreGanador, SpritesFatality *sprites)
+void cargarSpritesFatality(Personaje *ganador, const char *nombreGanador)
 {
     // para int numSpritesFatality
-    for (int i = 0; i < sprites->numSpritesFatality; i++)
+    for (int i = 0; i < ganador->fatalityGolpe->numSpritesFatality; i++)
     {
         char nombreArchivo[100];
         char nombreArchivoMask[100];
@@ -541,7 +565,7 @@ void cargarSpritesFatality(Personaje *ganador, const char *nombreGanador, Sprite
         }
     }
     // para int numSpritesAbatido
-    for (int i = 0; i < sprites->numSpritesAbatido; i++)
+    for (int i = 0; i < ganador->fatalityGolpe->numSpritesAbatido; i++)
     {
         char nombreArchivo[100];
         char nombreArchivoMask[100];
@@ -556,7 +580,7 @@ void cargarSpritesFatality(Personaje *ganador, const char *nombreGanador, Sprite
         }
     }
     // para  int numSpritesTecnica
-    for (int i = 0; i < sprites->numSpritesTecnica; i++)
+    for (int i = 0; i < ganador->fatalityGolpe->numSpritesTecnica; i++)
     {
         char nombreArchivo[100];
         char nombreArchivoMask[100];
@@ -572,8 +596,6 @@ void cargarSpritesFatality(Personaje *ganador, const char *nombreGanador, Sprite
 
 void cargarAnimacionFatality(Personaje *ganador, MenuSeleccion *menuSel)
 {
-    // Instanciar una nueva variable de tipo SpritesFatality de forma local para almacenar los campos correspondientes
-    SpritesFatality newSprites;
     // buffer para el nombre del ganador
     char nombreGanador[20];
     // se crea la memoria para las animaciones del fatality
@@ -586,19 +608,23 @@ void cargarAnimacionFatality(Personaje *ganador, MenuSeleccion *menuSel)
     {
         if (menuSel->selP1 == LIUKANG)
         {
-            ganador->fatalityGolpe->totalFrames = 18;
+            ganador->fatalityGolpe->totalFrames = 12;
             sprintf(nombreGanador, "liu");
-            newSprites.numSpritesAbatido = 8;
-            newSprites.numSpritesFatality = 6;
-            newSprites.numSpritesTecnica = 11;
+            ganador->fatalityGolpe->numSpritesAbatido = 8;
+            ganador->fatalityGolpe->numSpritesFatality = 6;
+            ganador->fatalityGolpe->numSpritesTecnica = 11;
+            ganador->fatalityGolpe->coorXFatality = 400;
+            ganador->fatalityGolpe->coorYFatality = 400;
         }
         else if (menuSel->selP1 == SUBZERO)
         {
-            ganador->fatalityGolpe->totalFrames = 15;
+            ganador->fatalityGolpe->totalFrames = 11;
             sprintf(nombreGanador, "sub");
-            newSprites.numSpritesAbatido = 10;
-            newSprites.numSpritesFatality = 5;
-            newSprites.numSpritesTecnica = 4;
+            ganador->fatalityGolpe->numSpritesAbatido = 10;
+            ganador->fatalityGolpe->numSpritesFatality = 5;
+            ganador->fatalityGolpe->numSpritesTecnica = 4;
+            ganador->fatalityGolpe->coorXFatality = 400;
+            ganador->fatalityGolpe->coorYFatality = 400;
         }
     }
     // para el personaje 2
@@ -606,19 +632,23 @@ void cargarAnimacionFatality(Personaje *ganador, MenuSeleccion *menuSel)
     {
         if (menuSel->selP2 == SCORPION)
         {
-            ganador->fatalityGolpe->totalFrames = 18;
+            ganador->fatalityGolpe->totalFrames = 9;
             sprintf(nombreGanador, "scor");
-            newSprites.numSpritesAbatido = 8;
-            newSprites.numSpritesFatality = 8;
-            newSprites.numSpritesTecnica = 8;
+            ganador->fatalityGolpe->numSpritesAbatido = 8;
+            ganador->fatalityGolpe->numSpritesFatality = 8;
+            ganador->fatalityGolpe->numSpritesTecnica = 8;
+            ganador->fatalityGolpe->coorXFatality = 800;
+            ganador->fatalityGolpe->coorYFatality = 400;
         }
         else if (menuSel->selP2 == RAIDEN)
         {
-            ganador->fatalityGolpe->totalFrames = 18;
+            ganador->fatalityGolpe->totalFrames = 16;
             sprintf(nombreGanador, "raiden");
-            newSprites.numSpritesAbatido = 15;
-            newSprites.numSpritesFatality = 10;
-            newSprites.numSpritesTecnica = 7;
+            ganador->fatalityGolpe->numSpritesAbatido = 15;
+            ganador->fatalityGolpe->numSpritesFatality = 10;
+            ganador->fatalityGolpe->numSpritesTecnica = 7;
+            ganador->fatalityGolpe->coorXFatality = 800;
+            ganador->fatalityGolpe->coorYFatality = 400;
         }
     }
 
@@ -636,7 +666,7 @@ void cargarAnimacionFatality(Personaje *ganador, MenuSeleccion *menuSel)
     }
 
     // Llenar o buscar los archivos bmp acorde al nombre del personaje/ganador y el nmumero de frames
-    cargarSpritesFatality(ganador, nombreGanador, &newSprites);
+    cargarSpritesFatality(ganador, nombreGanador);
 }
 
 void dibujarEscenaFatality(Personaje *ganador, Personaje *perdedor)
@@ -650,14 +680,14 @@ void dibujarEscenaFatality(Personaje *ganador, Personaje *perdedor)
     int frame = ganador->fatalityGolpe->frameActual;
     if (frame < ganador->fatalityGolpe->totalFrames)
     {
-        ventana.muestraImagenEscalada(ganador->x, ganador->y, 154, 190, ganador->fatalityGolpe->personajeFatality[frame]);
+        ventana.muestraImagenEscalada(ganador->fatalityGolpe->coorXFatality, ganador->fatalityGolpe->coorYFatality, 154, 190, ganador->fatalityGolpe->personajeFatality[frame]);
         if (frame >= 4)
         {
-            ventana.muestraImagenEscalada(perdedor->x - 80, perdedor->y, 154, 190, ganador->fatalityGolpe->dibujoTecnica[frame]);
+            ventana.muestraImagenEscalada(perdedor->x, perdedor->y, 154, 190, ganador->fatalityGolpe->dibujoTecnica[frame]);
         }
         if (frame >= 5)
         {
-            ventana.muestraImagenEscalada(perdedor->x - 50, perdedor->y, 130, 190, ganador->fatalityGolpe->personajeAbatido[frame]);
+            ventana.muestraImagenEscalada(perdedor->x, perdedor->y, 130, 190, ganador->fatalityGolpe->personajeAbatido[frame]);
         }
         else
         {

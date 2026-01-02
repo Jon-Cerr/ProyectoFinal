@@ -21,11 +21,30 @@ Fondos *crearFondos()
     return fondos;
 }
 
-void animacionPersonaje(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado)
+void animacionPersonaje(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado, Board *esp32)
 {
     actualizarMovimiento(juego->personaje1, juego->tecla, juego->teclaSoltada);
+    if (esp32 != NULL)
+    {
+        mapearControlesEsp32(esp32, &(juego->personaje2->controlsEsp32));
+        juego->personaje2->moviendoDerecha = juego->personaje2->controlsEsp32.derechaEsp32;
+        juego->personaje2->moviendoIzquierda = juego->personaje2->controlsEsp32.izquierdaEsp32;
+        juego->personaje2->defendiendo = juego->personaje2->controlsEsp32.defensaEsp32;
+        if (juego->personaje2->controlsEsp32.golpeEsp32)
+        {
+            cambiarEstado(juego->personaje2, juego->personaje2->controls.golpe, -1);
+        }
+        else if (juego->personaje2->controlsEsp32.golpe2Esp32)
+        {
+            cambiarEstado(juego->personaje2, juego->personaje2->controls.golpe2, -1);
+        }
+        else if (juego->personaje2->controlsEsp32.patadaEsp32)
+        {
+            cambiarEstado(juego->personaje2, juego->personaje2->controls.patada, -1);
+        }
+        actualizarMovimiento(juego->personaje2, -1, -1);
+    }
     dibujarPersonaje(juego->personaje1);
-    actualizarMovimiento(juego->personaje2, juego->tecla, juego->teclaSoltada);
     dibujarPersonaje(juego->personaje2);
     dibujarHUD(juego->personaje1, juego->tecla, menuSel);
     dibujarHUDP2(juego->personaje2, juego->tecla, menuSel);
@@ -67,10 +86,10 @@ void iniciarJuego(Juego *juego, EstadoJuego *estadoJuego)
     }
 }
 
-void gameLoop(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado)
+void gameLoop(Juego *juego, MenuSeleccion *menuSel, EstadoJuego *estado, Board *esp32)
 {
     dibujarEscenario(juego->fondosJuego);
-    animacionPersonaje(juego, menuSel, estado);
+    animacionPersonaje(juego, menuSel, estado, esp32);
 }
 
 AssetsRetratos *crearRetratos()
@@ -275,7 +294,7 @@ void ejecutarLogicaFatality(Juego *juego, EstadoJuego *estado, MenuSeleccion *me
     Personaje *perdedor = (ganador == juego->personaje1) ? juego->personaje2 : juego->personaje1;
     if (ganador->fatalityGolpe != NULL)
     {
-        dibujarEscenaFatality(ganador, perdedor);   
+        dibujarEscenaFatality(ganador, perdedor);
         static int frames = 0;
         frames++;
         if (frames >= 6)
