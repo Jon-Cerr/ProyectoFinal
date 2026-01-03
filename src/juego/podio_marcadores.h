@@ -3,6 +3,7 @@
 
 #include "personaje.h"
 #include "../graficos/graficos.h"
+#include "../juego/juego.h"
 struct Juego; 
 typedef struct Juego Juego;
 

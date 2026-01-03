@@ -1,12 +1,11 @@
 #include "podio_marcadores.h"
-#include "juego.h"
 void mostrarMarcadores(EstadoJuego *estadoJuego, Juego *juego)
 {
     ventana.reproducirAudio(NULL);
     while (*estadoJuego == ESTADO_PODIO)
     {
         ventana.limpiaVentana();
-        ventana.muestraImagenEscalada(0, 0, ventana.anchoVentana(), ventana.altoVentana(), juego->fondosJuego->fondoInicio);
+        ventana.muestraImagenEscalada(0, 0, ventana.anchoVentana(), ventana.altoVentana(), juego->fondosJuego->fondoPodio);
         int posYInicial = 250;
         int separacionY = 60;
 
@@ -21,8 +20,6 @@ void mostrarMarcadores(EstadoJuego *estadoJuego, Juego *juego)
         }
         if (ventana.teclaPresionada() == TECLAS.LETRA_V)
             *estadoJuego = ESTADO_MENUSELECCION;
-        if (ventana.teclaPresionada() == TECLAS.ESCAPE)
-            exit(0);
         ventana.actualizaVentana();
         ventana.espera(10);
     }

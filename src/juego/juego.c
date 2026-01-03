@@ -18,6 +18,7 @@ Fondos *crearFondos()
     }
     fondos->fondoInicio = ventana.creaImagen("./assets/img/fondoInicio.bmp");
     fondos->fondoStage = ventana.creaImagen("./assets/img/fondo_stage.bmp");
+    fondos->fondoPodio = ventana.creaImagen("./assets/img/fondo_podio.bmp");
     return fondos;
 }
 
@@ -108,9 +109,9 @@ AssetsRetratos *crearRetratos()
     retratosPersonajes->subZeroSeleccionado = ventana.creaImagen("./assets/img/subZeroSeleccionado.bmp");
     retratosPersonajes->raidenSeleccionado = ventana.creaImagen("./assets/img/raidenSeleccionado.bmp");
     retratosPersonajes->fondoSeleccion = ventana.creaImagen("./assets/img/fondoSeleccion.bmp");
-    retratosPersonajes->contenedorRetrato = ventana.creaImagen("./assets/img/contenedorRetrato.bmp");
     retratosPersonajes->cursorSelector = ventana.creaImagenConMascara("./assets/img/cursorSelector.bmp", "./assets/img/cursorSelectorMask.bmp");
     retratosPersonajes->cursorSelectorP2 = ventana.creaImagenConMascara("./assets/img/cursorSelectorP2.bmp", "./assets/img/cursorSelectorMask.bmp");
+    retratosPersonajes->versusIcon = ventana.creaImagenConMascara("./assets/img/versus_icon.bmp", "./assets/img/versus_icon_mask.bmp");
     return retratosPersonajes;
 }
 
@@ -151,6 +152,7 @@ void crearMenuSeleccion(AssetsRetratos *retrato)
     ventana.muestraImagenEscalada(100, 330, 100, 150, retrato->subZero);
     ventana.muestraImagenEscalada(1080, 170, 100, 150, retrato->scorpion);
     ventana.muestraImagenEscalada(1080, 330, 100, 150, retrato->raiden);
+    ventana.texto1((ventana.anchoVentana() / 2) - 150, 600, "Presiona V para ir al Podio", 30, "Arial");
 }
 
 void dibujarCursor(CursorSeleccion *cursorPersonaje, AssetsRetratos *retratos, Personajes *personaje)
@@ -281,6 +283,7 @@ void animacionInicioPelea(MenuSeleccion *menuSel)
             ventana.texto1(830, (ventana.altoVentana() / 2) + 200, "RAIDEN", 40, "Arial");
         }
     }
+    ventana.muestraImagenEscalada((ventana.anchoVentana() / 2) - 100, 300, 200, 200, menuSel->retrato->versusIcon);
 }
 
 void ejecutarLogicaFatality(Juego *juego, EstadoJuego *estado, MenuSeleccion *menuSel)
@@ -353,4 +356,5 @@ void liberarImagenes(AssetsRetratos *retratosPersonajes)
     ventana.eliminaImagen(retratosPersonajes->scorpionSeleccionado);
     ventana.eliminaImagen(retratosPersonajes->subZeroSeleccionado);
     ventana.eliminaImagen(retratosPersonajes->raidenSeleccionado);
+    ventana.eliminaImagen(retratosPersonajes->versusIcon);
 }

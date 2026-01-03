@@ -3,14 +3,12 @@
 #include "./personaje.h"
 #include "./podio_marcadores.h"
 
-typedef struct Personaje *personaje1;
-typedef struct Personaje *personaje2;
-
 //integrar imagenes/almacenar  punteros
 typedef struct Fondos
 {
     Imagen *fondoInicio;
     Imagen *fondoStage;
+    Imagen *fondoPodio;
 } Fondos;
 
 //campos necesarios para el Juego, varios apuntan a otras structs
@@ -40,9 +38,9 @@ typedef struct
     Imagen *subZeroSeleccionado;
     Imagen *raidenSeleccionado;
     Imagen *fondoSeleccion;
-    Imagen *contenedorRetrato;
     Imagen *cursorSelector;
     Imagen *cursorSelectorP2;
+    Imagen *versusIcon;
 } AssetsRetratos;
 
 //struct que sirve para cambiar el cursor/selector de personajes y detectar su id

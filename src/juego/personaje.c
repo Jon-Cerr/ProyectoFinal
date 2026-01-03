@@ -14,6 +14,8 @@ Personaje *cargarPersonaje(Personaje *personaje, EstadoPersonaje estado, const c
     // Inicializar campos
     personaje->x = 100;
     personaje->y = 400;
+    personaje->altoPersonaje = 220;
+    personaje->anchoPersonaje = 184;
     personaje->vida = 100;
     personaje->estado = QUIETO;
     personaje->frameActual = 0;
@@ -49,8 +51,10 @@ Personaje *cargarPersonaje2(Personaje *personaje, EstadoPersonaje estado, const 
     // Inicializar campos
     personaje->x = 1000;
     personaje->y = 400;
+    personaje->altoPersonaje = 220;
+    personaje->anchoPersonaje = 184;
     personaje->vida = 100;
-    personaje->estado = QUIETO; // quieto
+    personaje->estado = QUIETO;
     personaje->frameActual = 0;
     personaje->totalFrames = 4;
     personaje->moviendoDerecha = false;
@@ -236,42 +240,42 @@ void dibujarPersonaje(Personaje *personaje)
     // si el estado es quieto, se dibujan los sprites de "quieto"
     if (personaje->estado == QUIETO)
     {
-        ventana.muestraImagenEscalada(personaje->x, personaje->y, 154, 190, personaje->animQuieto[personaje->frameActual]);
+        ventana.muestraImagenEscalada(personaje->x, personaje->y, personaje->anchoPersonaje, personaje->altoPersonaje, personaje->animQuieto[personaje->frameActual]);
     }
     // si el estado es caminando, se dibujan los sprites de "caminando"
     else if (personaje->estado == CAMINANDO_DER || personaje->estado == CAMINANDO_IZQ)
     {
-        ventana.muestraImagenEscalada(personaje->x, personaje->y, 154, 190, personaje->animCaminata[personaje->frameActual]);
+        ventana.muestraImagenEscalada(personaje->x, personaje->y, personaje->anchoPersonaje, personaje->altoPersonaje, personaje->animCaminata[personaje->frameActual]);
     }
     // si el estado es golpeando, se dibujan los sprites de "golpeando"
     else if (personaje->estado == GOLPEANDO)
     {
-        ventana.muestraImagenEscalada(personaje->x, personaje->y, 154, 190, personaje->animGolpe[personaje->frameActual]);
+        ventana.muestraImagenEscalada(personaje->x, personaje->y, personaje->anchoPersonaje, personaje->altoPersonaje, personaje->animGolpe[personaje->frameActual]);
     }
     // si el estado es golpeando2, se dibujan los sprites de "golpeando2"
     else if (personaje->estado == GOLPEANDO2)
     {
-        ventana.muestraImagenEscalada(personaje->x, personaje->y, 154, 190, personaje->animGolpe2[personaje->frameActual]);
+        ventana.muestraImagenEscalada(personaje->x, personaje->y, personaje->anchoPersonaje, personaje->altoPersonaje, personaje->animGolpe2[personaje->frameActual]);
     }
     // si el estado es pateando, se dibujan los sprites de "pateando"
     else if (personaje->estado == PATEANDO)
     {
-        ventana.muestraImagenEscalada(personaje->x, personaje->y, 154, 190, personaje->animPatada[personaje->frameActual]);
+        ventana.muestraImagenEscalada(personaje->x, personaje->y, personaje->anchoPersonaje, personaje->altoPersonaje, personaje->animPatada[personaje->frameActual]);
     }
     // si el estado es GOLPEADO, se dibujan los sprites de "GOLPEADO"
     else if (personaje->estado == GOLPEADO)
     {
-        ventana.muestraImagenEscalada(personaje->x, personaje->y, 154, 190, personaje->animGolpeado[personaje->frameActual]);
+        ventana.muestraImagenEscalada(personaje->x, personaje->y, personaje->anchoPersonaje, personaje->altoPersonaje, personaje->animGolpeado[personaje->frameActual]);
     }
     // si el estado es defensa, se dibujan los sprites de "defensa"
     else if (personaje->estado == DEFENSA)
     {
-        ventana.muestraImagenEscalada(personaje->x, personaje->y, 154, 190, personaje->animDefensa[personaje->frameActual]);
+        ventana.muestraImagenEscalada(personaje->x, personaje->y, personaje->anchoPersonaje, personaje->altoPersonaje, personaje->animDefensa[personaje->frameActual]);
     }
     // si el estado es ABATIDO, se dibujan los sprites de "ABATIDO"
     else if (personaje->estado == ABATIDO)
     {
-        ventana.muestraImagenEscalada(personaje->x, personaje->y, 154, 190, personaje->animAbatido[personaje->frameActual]);
+        ventana.muestraImagenEscalada(personaje->x, personaje->y, personaje->anchoPersonaje, personaje->altoPersonaje, personaje->animAbatido[personaje->frameActual]);
     }
 }
 
