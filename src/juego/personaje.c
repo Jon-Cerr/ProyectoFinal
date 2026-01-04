@@ -1,3 +1,14 @@
+/**
+ * @file personaje.h
+ * @author Alan Jonathan Cerritos Hernandez (alanchdez147@gmail.com) 2026640080
+ * @author Ricardo Chaparro Zarco (ricardochzarco@gmail.com) 2026640302
+ * @author Jesus Roque Lopez (jesusroquelopez22@gmail.com) 2026640210
+ * @brief Archivo de funciones para personaje
+ * @version 0.1
+ * @date 2026-01-04
+ * Proyecto Final
+ * 
+ */
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -545,7 +556,7 @@ void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla, M
     // logica para el personaje 2 para activar el fatality
     if (personaje1->estado == ABATIDO && distancia < 150)
     {
-        if (tecla == TECLAS.LETRA_U)
+        if (personaje2->controlsEsp32.golpeEsp32)
         {
             cargarAnimacionFatality(personaje2, menuSel);
             *estado = ESTADO_FATALITY;

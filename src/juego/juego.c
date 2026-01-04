@@ -1,3 +1,14 @@
+/**
+ * @file juego.c
+ * @author Alan Jonathan Cerritos Hernandez (alanchdez147@gmail.com) 2026640080
+ * @author Rciardo Chaparro Zarco (ricardochzarco@gmail.com) 2026640302
+ * @author Jesus Roque Lopez (jesusroquelopez22@gmail.com) 2026640210
+ * @brief Archivo de definicion de funciones para juego
+ * @version 0.1
+ * @date 2026-01-04
+ * Proyecto Final
+ * 
+ */
 #include "../graficos/graficos.h"
 #include "./juego.h"
 
