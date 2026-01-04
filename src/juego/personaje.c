@@ -477,7 +477,7 @@ void detectarColision(Personaje *personaje1, Personaje *personaje2, int tecla, M
 {
     // distancia absoluta entre personaje1 y personaje2
     int distancia = abs(personaje1->x - personaje2->x);
-    int minColision = 100; // colision minima para detectar el golpe
+    int minColision = 150; // colision minima para detectar el golpe
     // comparar distancias para hacer efectiva la colision
     if (distancia < minColision)
     {
@@ -625,9 +625,9 @@ void cargarAnimacionFatality(Personaje *ganador, MenuSeleccion *menuSel)
             ganador->fatalityGolpe->totalFrames = 11;
             sprintf(nombreGanador, "sub");
             ganador->fatalityGolpe->numSpritesAbatido = 10;
-            ganador->fatalityGolpe->numSpritesFatality = 5;
+            ganador->fatalityGolpe->numSpritesFatality = 3;
             ganador->fatalityGolpe->numSpritesTecnica = 4;
-            ganador->fatalityGolpe->coorXFatality = 400;
+            ganador->fatalityGolpe->coorXFatality = 200;
             ganador->fatalityGolpe->coorYFatality = 400;
         }
     }
@@ -675,7 +675,7 @@ void cargarAnimacionFatality(Personaje *ganador, MenuSeleccion *menuSel)
 
 void dibujarEscenaFatality(Personaje *ganador, Personaje *perdedor)
 {
-    // si falla la reserva de memoria, retornar NULL para evitar crasheos
+    // si falla la reserva de memoria, retornamos NULL para evitar crasheos
     if (ganador->fatalityGolpe == NULL)
     {
         return;
@@ -684,18 +684,56 @@ void dibujarEscenaFatality(Personaje *ganador, Personaje *perdedor)
     int frame = ganador->fatalityGolpe->frameActual;
     if (frame < ganador->fatalityGolpe->totalFrames)
     {
-        ventana.muestraImagenEscalada(ganador->fatalityGolpe->coorXFatality, ganador->fatalityGolpe->coorYFatality, 154, 190, ganador->fatalityGolpe->personajeFatality[frame]);
-        if (frame >= 4)
+        // liukang, scorpion
+        if (ganador->fatalityGolpe->totalFrames == 12 || ganador->fatalityGolpe->totalFrames == 9)
         {
-            ventana.muestraImagenEscalada(perdedor->x, perdedor->y, 154, 190, ganador->fatalityGolpe->dibujoTecnica[frame]);
+            ventana.muestraImagenEscalada(ganador->fatalityGolpe->coorXFatality, ganador->fatalityGolpe->coorYFatality, 154, 190, ganador->fatalityGolpe->personajeFatality[frame]);
+            if (frame >= 4)
+            {
+                ventana.muestraImagenEscalada(perdedor->x, perdedor->y, 154, 190, ganador->fatalityGolpe->dibujoTecnica[frame]);
+            }
+            if (frame >= 5)
+            {
+                ventana.muestraImagenEscalada(perdedor->x, perdedor->y, 130, 190, ganador->fatalityGolpe->personajeAbatido[frame]);
+            }
+            else
+            {
+                dibujarPersonaje(perdedor);
+            }
         }
-        if (frame >= 5)
+        // subzero
+        else if (ganador->fatalityGolpe->totalFrames == 11)
         {
-            ventana.muestraImagenEscalada(perdedor->x, perdedor->y, 130, 190, ganador->fatalityGolpe->personajeAbatido[frame]);
+            ventana.muestraImagenEscalada(perdedor->x - ganador->fatalityGolpe->coorXFatality, ganador->fatalityGolpe->coorYFatality, 154, 190, ganador->fatalityGolpe->personajeFatality[frame]);
+            if (frame >= 1)
+            {
+                ventana.muestraImagenEscalada(perdedor->x, perdedor->y, 154, 190, ganador->fatalityGolpe->dibujoTecnica[frame]);
+            }
+            if (frame >= 2)
+            {
+                ventana.muestraImagenEscalada(perdedor->x, perdedor->y, 130, 190, ganador->fatalityGolpe->personajeAbatido[frame]);
+            }
+            else
+            {
+                dibujarPersonaje(perdedor);
+            }
         }
-        else
+        // raiden
+        else if (ganador->fatalityGolpe->totalFrames == 16)
         {
-            dibujarPersonaje(perdedor);
+            ventana.muestraImagenEscalada(ganador->fatalityGolpe->coorXFatality, ganador->fatalityGolpe->coorYFatality, 154, 190, ganador->fatalityGolpe->personajeFatality[frame]);
+            if (frame >= 1)
+            {
+                ventana.muestraImagenEscalada(perdedor->x, perdedor->y, 154, 190, ganador->fatalityGolpe->dibujoTecnica[frame]);
+            }
+            if (frame >= 3)
+            {
+                ventana.muestraImagenEscalada(perdedor->x, perdedor->y, 130, 190, ganador->fatalityGolpe->personajeAbatido[frame]);
+            }
+            else
+            {
+                dibujarPersonaje(perdedor);
+            }
         }
     }
 }
