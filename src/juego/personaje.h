@@ -61,11 +61,13 @@ typedef struct
     Imagen **personajeFatality;
     Imagen **personajeAbatido;
     Imagen **dibujoTecnica;
+    Imagen **dibujoPoseGanadora;
     int totalFrames;
     int frameActual;
     int numSpritesFatality;
     int numSpritesAbatido;
     int numSpritesTecnica;
+    int numSpritesPoseGanadora;
     int coorXFatality;
     int coorYFatality;
 } Fatality;

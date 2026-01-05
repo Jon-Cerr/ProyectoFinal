@@ -35,6 +35,7 @@ typedef struct Juego
     bool p1Listo;
     bool p2Listo;
     RegistroGanador nuevoRegistro[5];
+    int timerTransicionAMenu;
 } Juego;
 
 //integrar imagenes/almacenar punteros de imagenes con los retratos de los personajes disponibles

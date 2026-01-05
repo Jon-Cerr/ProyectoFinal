@@ -7,7 +7,7 @@
  * @version 0.1
  * @date 2026-01-04
  * Proyecto Final
- * 
+ *
  */
 #include "../graficos/graficos.h"
 #include "./juego.h"
@@ -313,42 +313,71 @@ void ejecutarLogicaFatality(Juego *juego, EstadoJuego *estado, MenuSeleccion *me
         frames++;
         if (frames >= 6)
         {
-            ganador->fatalityGolpe->frameActual++;
+            if (ganador->fatalityGolpe->frameActual < ganador->fatalityGolpe->totalFrames)
+            {
+                ganador->fatalityGolpe->frameActual++;
+            }
             frames = 0;
         }
         if (ganador->fatalityGolpe->frameActual >= ganador->fatalityGolpe->totalFrames)
         {
+            const char *personajes[] = {"Sub-Zero", "Scorpion", "Raiden", "Liu Kang"};
             char nombreGanador[20];
             if (ganador == juego->personaje1)
             {
-                if (menuSel->selP1 == SUBZERO)
-                    sprintf(nombreGanador, "Sub-Zero");
-                else if (menuSel->selP1 == LIUKANG)
-                    sprintf(nombreGanador, "Liu Kang");
+                sprintf(nombreGanador, "%s", personajes[menuSel->selP1]);
             }
             else
             {
-                if (menuSel->selP2 == SCORPION)
-                    sprintf(nombreGanador, "Scorpion");
-                else if (menuSel->selP2 == RAIDEN)
-                    sprintf(nombreGanador, "Raiden");
+                sprintf(nombreGanador, "%s", personajes[menuSel->selP2]);
+            }
+            juego->timerTransicionAMenu--;
+            if (juego->timerTransicionAMenu % 20 > 10)
+            {
+                ventana.color(COLORES.ROJO);
+                ventana.texto1((ventana.anchoVentana() / 2) - 200, (ventana.altoVentana() / 2) - 45, "FATALITY", 100, "Times New Roman");
+                ventana.color(COLORES.BLANCO);
+                ventana.texto1((ventana.anchoVentana() / 2) - 190, (ventana.altoVentana() / 2) - 50, "FATALITY", 100, "Times New Roman");
+            }
+            if (juego->timerTransicionAMenu == 100)
+            {
+                if (ganador == juego->personaje1)
+                {
+                    if (menuSel->selP1 == SUBZERO)
+                        ventana.reproducirAudio("assets/audio/subzeroWins.wav");
+                    else if (menuSel->selP1 == LIUKANG)
+                        ventana.reproducirAudio("assets/audio/liukangWins.wav");
+                }
+                else
+                {
+                    if (menuSel->selP2 == SCORPION)
+                        ventana.reproducirAudio("assets/audio/scorpionWins.wav");
+                    else if (menuSel->selP2 == RAIDEN)
+                        ventana.reproducirAudio("assets/audio/raidenWins.wav");
+                }
             }
 
-            juego->p1Listo = false;
-            juego->p2Listo = false;
-            menuSel->duracionTransicion = 50;
-            *estado = ESTADO_MENUSELECCION;
-            registrarVictoria(juego, nombreGanador);
-            ganador->fatalityGolpe->frameActual = 0;
-            juego->personaje1->vida = 100;
-            juego->personaje2->vida = 100;
-            if (*estado == ESTADO_MENUSELECCION)
+            if (juego->timerTransicionAMenu <= 0)
             {
-                ventana.reproducirAudio("assets/audio/audioPelea1.wav");
-                liberarPersonajeMemoria(juego->personaje1);
-                liberarPersonajeMemoria(juego->personaje2);
-                juego->personaje1 = NULL;
-                juego->personaje2 = NULL;
+                juego->p1Listo = false;
+                juego->p2Listo = false;
+                menuSel->duracionTransicion = 50;
+                juego->timerTransicionAMenu = 150;
+                registrarVictoria(juego, nombreGanador);
+                *estado = ESTADO_MENUSELECCION;
+                ganador->fatalityGolpe->frameActual = 0;
+                juego->personaje1->vida = 100;
+                juego->personaje2->vida = 100;
+                if (*estado == ESTADO_MENUSELECCION)
+                {
+                    ventana.reproducirAudio("assets/audio/audioPelea1.wav");
+                    liberarPersonajeMemoria(juego->personaje1);
+                    liberarPersonajeMemoria(juego->personaje2);
+                    juego->personaje1 = NULL;
+                    juego->personaje2 = NULL;
+                    menuSel->selP1 = LIUKANG;
+                    menuSel->selP2 = SCORPION;
+                }
             }
         }
     }
