@@ -70,12 +70,12 @@ Personaje *cargarPersonaje2(Personaje *personaje, EstadoPersonaje estado, const 
     personaje->totalFrames = 4;
     personaje->moviendoDerecha = false;
     personaje->moviendoIzquierda = false;
-    personaje->controls.derecha = TECLAS.LETRA_D;
-    personaje->controls.izquierda = TECLAS.LETRA_A;
-    personaje->controls.golpe = TECLAS.LETRA_Q;
-    personaje->controls.golpe2 = TECLAS.LETRA_E;
-    personaje->controls.patada = TECLAS.LETRA_W;
-    personaje->controls.defensa = TECLAS.LETRA_Z;
+    personaje->controls.derecha = TECLAS.LETRA_L;
+    personaje->controls.izquierda = TECLAS.LETRA_J;
+    personaje->controls.golpe = TECLAS.LETRA_U;
+    personaje->controls.golpe2 = TECLAS.LETRA_I;
+    personaje->controls.patada = TECLAS.LETRA_O;
+    personaje->controls.defensa = TECLAS.LETRA_M;
     personaje->controlsEsp32.defensaEsp32 = false;
     personaje->defendiendo = false;
     personaje->fatalityGolpe = NULL;
@@ -630,6 +630,7 @@ void cargarAnimacionFatality(Personaje *ganador, MenuSeleccion *menuSel)
     ganador->fatalityGolpe = (Fatality *)malloc(sizeof(Fatality));
     // Se inicializa el frameActual a 0 para iniciar la animacion
     ganador->fatalityGolpe->frameActual = 0;
+    // es el total de sprites para la pose ganadora
     ganador->fatalityGolpe->numSpritesPoseGanadora = 4;
     // condiciones para saber de que personaje se cargaran los frames y acorde a eso establecer el numero de frames
     // Para el personaje 1
@@ -695,7 +696,7 @@ void cargarAnimacionFatality(Personaje *ganador, MenuSeleccion *menuSel)
         ganador->fatalityGolpe->dibujoTecnica[z] = NULL;
     }
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < ganador->fatalityGolpe->numSpritesPoseGanadora; i++)
     {
         ganador->fatalityGolpe->dibujoPoseGanadora[i] = NULL;
     }
@@ -718,7 +719,7 @@ void dibujarEscenaFatality(Personaje *ganador, Personaje *perdedor)
         // liukang, scorpion
         if (ganador->fatalityGolpe->totalFrames == 12 || ganador->fatalityGolpe->totalFrames == 9)
         {
-            ventana.muestraImagenEscalada(perdedor->x - ganador->fatalityGolpe->coorXFatality, ganador->fatalityGolpe->coorYFatality, 154, 190, ganador->fatalityGolpe->personajeFatality[frame]);
+            ventana.muestraImagenEscalada(ganador->fatalityGolpe->coorXFatality, ganador->fatalityGolpe->coorYFatality, ganador->anchoPersonaje, ganador->altoPersonaje, ganador->fatalityGolpe->personajeFatality[frame]);
             if (frame >= 4)
             {
                 ventana.muestraImagenEscalada(perdedor->x, perdedor->y, perdedor->anchoPersonaje, perdedor->altoPersonaje, ganador->fatalityGolpe->dibujoTecnica[frame]);
@@ -752,7 +753,7 @@ void dibujarEscenaFatality(Personaje *ganador, Personaje *perdedor)
         // raiden
         else if (ganador->fatalityGolpe->totalFrames == 16)
         {
-            ventana.muestraImagenEscalada(perdedor->x - ganador->fatalityGolpe->coorXFatality, ganador->fatalityGolpe->coorYFatality, 154, 190, ganador->fatalityGolpe->personajeFatality[frame]);
+            ventana.muestraImagenEscalada(perdedor->x + 200, ganador->fatalityGolpe->coorYFatality, ganador->anchoPersonaje, ganador->altoPersonaje, ganador->fatalityGolpe->personajeFatality[frame]);
             if (frame >= 1)
             {
                 ventana.muestraImagenEscalada(perdedor->x, perdedor->y, perdedor->anchoPersonaje, perdedor->altoPersonaje, ganador->fatalityGolpe->dibujoTecnica[frame]);
@@ -793,33 +794,32 @@ void liberarPersonajeMemoria(Personaje *personaje)
             if (personaje->sprites[i] != NULL)
             {
                 ventana.eliminaImagen(personaje->sprites[i]);
-                personaje->sprites[i] = NULL;
             }
         }
         free(personaje->sprites);
     }
-
     if (personaje->fatalityGolpe != NULL)
     {
         for (int i = 0; i < personaje->fatalityGolpe->totalFrames; i++)
         {
-            if (personaje->fatalityGolpe->personajeFatality && personaje->fatalityGolpe->personajeFatality[i])
+            if (personaje->fatalityGolpe->personajeFatality[i])
                 ventana.eliminaImagen(personaje->fatalityGolpe->personajeFatality[i]);
-            if (personaje->fatalityGolpe->personajeAbatido && personaje->fatalityGolpe->personajeAbatido[i])
+            if (personaje->fatalityGolpe->personajeAbatido[i])
                 ventana.eliminaImagen(personaje->fatalityGolpe->personajeAbatido[i]);
-            if (personaje->fatalityGolpe->dibujoTecnica && personaje->fatalityGolpe->dibujoTecnica[i])
+            if (personaje->fatalityGolpe->dibujoTecnica[i])
                 ventana.eliminaImagen(personaje->fatalityGolpe->dibujoTecnica[i]);
         }
-        if (personaje->fatalityGolpe->personajeFatality)
-            free(personaje->fatalityGolpe->personajeFatality);
-        if (personaje->fatalityGolpe->personajeAbatido)
-            free(personaje->fatalityGolpe->personajeAbatido);
-        if (personaje->fatalityGolpe->dibujoTecnica)
-            free(personaje->fatalityGolpe->dibujoTecnica);
-
+        for (int i = 0; i < personaje->fatalityGolpe->numSpritesPoseGanadora; i++)
+        {
+            if (personaje->fatalityGolpe->dibujoPoseGanadora[i])
+                ventana.eliminaImagen(personaje->fatalityGolpe->dibujoPoseGanadora[i]);
+        }
+        free(personaje->fatalityGolpe->personajeFatality);
+        free(personaje->fatalityGolpe->personajeAbatido);
+        free(personaje->fatalityGolpe->dibujoTecnica);
+        free(personaje->fatalityGolpe->dibujoPoseGanadora);
         free(personaje->fatalityGolpe);
         personaje->fatalityGolpe = NULL;
     }
-
     free(personaje);
 }

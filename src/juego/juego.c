@@ -339,7 +339,7 @@ void ejecutarLogicaFatality(Juego *juego, EstadoJuego *estado, MenuSeleccion *me
                 ventana.color(COLORES.BLANCO);
                 ventana.texto1((ventana.anchoVentana() / 2) - 190, (ventana.altoVentana() / 2) - 50, "FATALITY", 100, "Times New Roman");
             }
-            if (juego->timerTransicionAMenu == 100)
+            if (juego->timerTransicionAMenu == 50)
             {
                 if (ganador == juego->personaje1)
                 {
@@ -362,7 +362,7 @@ void ejecutarLogicaFatality(Juego *juego, EstadoJuego *estado, MenuSeleccion *me
                 juego->p1Listo = false;
                 juego->p2Listo = false;
                 menuSel->duracionTransicion = 50;
-                juego->timerTransicionAMenu = 150;
+                juego->timerTransicionAMenu = 100;
                 registrarVictoria(juego, nombreGanador);
                 *estado = ESTADO_MENUSELECCION;
                 ganador->fatalityGolpe->frameActual = 0;

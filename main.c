@@ -59,7 +59,7 @@ int main()
     juego->teclaSoltada = teclaSoltada;
     juego->p1Listo = false;
     juego->p2Listo = false;
-    juego->timerTransicionAMenu = 150;
+    juego->timerTransicionAMenu = 100;
     MenuSeleccion *menuSel = (MenuSeleccion *)malloc(sizeof(MenuSeleccion));
     menuSel->retrato = crearRetratos();
     menuSel->cursorP1 = (CursorSeleccion *)malloc(sizeof(CursorSeleccion));
